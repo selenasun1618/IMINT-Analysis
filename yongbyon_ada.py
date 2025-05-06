@@ -14,7 +14,6 @@ def extract_kmz(kmz_path, extract_to):
     with zipfile.ZipFile(kmz_path, 'r') as kmz:
         kmz.extractall(extract_to)
 
-
 def parse_kml_placemarks(kml_file_path):
     """Parses a KML file and returns a list of placemark dicts with name, lat, lon."""
     namespace = {'kml': 'http://www.opengis.net/kml/2.2'}
@@ -204,7 +203,7 @@ def main():
         fig.add_trace(radius_trace)
 
         fig.update_layout(
-            mapbox_style="satellite",
+            mapbox_style="satellite-streets",
             mapbox_center_lat=lat,
             mapbox_center_lon=lon,
             margin={"r":0,"t":0,"l":0,"b":0},

@@ -9,7 +9,6 @@ def extract_kmz(kmz_path, extract_to):
     with zipfile.ZipFile(kmz_path, 'r') as kmz:
         kmz.extractall(extract_to)
 
-
 def parse_kml_placemarks(kml_file_path):
     """Parses a KML file and returns a list of placemark dicts with name, lat, lon."""
     namespace = {'kml': 'http://www.opengis.net/kml/2.2'}
@@ -31,7 +30,6 @@ def parse_kml_placemarks(kml_file_path):
             })
     return placemark_data
 
-
 def build_gmaps_static_url(lat, lon, api_key, size=400, zoom=17, maptype='satellite'):
     """Constructs a Google Maps Static API URL for a given location."""
     base_url = "https://maps.googleapis.com/maps/api/staticmap"
@@ -44,7 +42,6 @@ def build_gmaps_static_url(lat, lon, api_key, size=400, zoom=17, maptype='satell
     }
     param_str = '&'.join(f"{k}={v}" for k, v in params.items())
     return f"{base_url}?{param_str}"
-
 
 def save_static_map_image(lat, lon, name, api_key, out_dir, size=400, zoom=17, maptype='satellite', current=None, total=None):
     """Downloads and saves a Google Maps Static image for the location."""
