@@ -1,4 +1,5 @@
 import zipfile
+from dotenv import load_dotenv
 import os
 import requests
 from xml.etree import ElementTree as ET
@@ -75,6 +76,7 @@ def screenshot_all_kml_locations(kml_path, api_key, out_dir, size=400, zoom=17, 
         )
 
 if __name__ == "__main__":
+    load_dotenv()
     KMZ_PATH = "NKEconWatch_2010.kmz"
     KML_EXTRACT_PATH = "extracted_coordinates"
     API_KEY = os.getenv("GOOGLE_MAPS_STATIC_API_KEY")
