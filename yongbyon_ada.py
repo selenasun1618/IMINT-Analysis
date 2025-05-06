@@ -104,7 +104,7 @@ def main():
 
     kmz_file = st.file_uploader("Upload KMZ file", type=["kmz"])
     if not kmz_file:
-        st.info("Please upload a KMZ file to continue.")
+        st.info("Please upload a KMZ file.")
         return
 
     # Save uploaded file
