@@ -74,12 +74,11 @@ def screenshot_all_kml_locations(kml_path, api_key, out_dir, size=400, zoom=17, 
             current=idx, total=total
         )
 
-
 if __name__ == "__main__":
     KMZ_PATH = "NKEconWatch_2010.kmz"
     KML_EXTRACT_PATH = "extracted_coordinates"
-    API_KEY = "AIzaSyBAdNnMyUPDyQBvMa9vmkxJtsVPHANIGBQ"
-    OUT_DIR = "screenshots"
+    API_KEY = os.getenv("GOOGLE_MAPS_STATIC_API_KEY")
+    OUT_DIR = "google_earth_screenshots"
     SIZE = 400   # X by X pixels
     ZOOM = 17    # Adjust
     MAPTYPE = "satellite"  # 'roadmap', 'hybrid', 'terrain'
