@@ -45,7 +45,7 @@ def build_gmaps_static_url(lat, lon, api_key, size=400, zoom=17, maptype='satell
     return f"{base_url}?{param_str}"
 
 
-def save_static_map_image(lat, lon, name, api_key, out_dir, size=400, zoom=17, maptype='satellite'):
+def save_static_map_image(lat, lon, name, api_key, out_dir, size=400, zoom=17, maptype='satellite', current=None, total=None):
     """Downloads and saves a Google Maps Static image for the location."""
     url = build_gmaps_static_url(lat, lon, api_key, size, zoom, maptype)
     response = requests.get(url)
@@ -54,7 +54,10 @@ def save_static_map_image(lat, lon, name, api_key, out_dir, size=400, zoom=17, m
         filepath = os.path.join(out_dir, filename)
         with open(filepath, 'wb') as f:
             f.write(response.content)
-        print(f"Saved: {filepath}")
+        if current is not None and total is not None:
+            print(f"Saved ({current}/{total}): {filepath}")
+        else:
+            print(f"Saved: {filepath}")
     else:
         print(f"Failed to fetch image for {name} ({lat}, {lon}): {response.status_code} - {response.text}")
 
@@ -63,33 +66,27 @@ def screenshot_all_kml_locations(kml_path, api_key, out_dir, size=400, zoom=17, 
     """Takes X by X screenshots of all KML locations using the Google Maps Static API."""
     os.makedirs(out_dir, exist_ok=True)
     placemarks = parse_kml_placemarks(kml_path)
-    for pm in placemarks:
+    total = len(placemarks)
+    print(f"Total images to screenshot: {total}")
+    for idx, pm in enumerate(placemarks, 1):
         save_static_map_image(
-            pm['lat'], pm['lon'], pm['name'], api_key, out_dir, size=size, zoom=zoom, maptype=maptype
+            pm['lat'], pm['lon'], pm['name'], api_key, out_dir, size=size, zoom=zoom, maptype=maptype,
+            current=idx, total=total
         )
 
 
 if __name__ == "__main__":
-    # --- USER CONFIGURATION ---
-
     KMZ_PATH = "NKEconWatch_2010.kmz"
     KML_EXTRACT_PATH = "extracted_coordinates"
     API_KEY = "AIzaSyBAdNnMyUPDyQBvMa9vmkxJtsVPHANIGBQ"
     OUT_DIR = "screenshots"
     SIZE = 400   # X by X pixels
-    ZOOM = 17    # Adjust as needed
+    ZOOM = 17    # Adjust
     MAPTYPE = "satellite"  # 'roadmap', 'hybrid', 'terrain'
 
     extract_kmz(KMZ_PATH, KML_EXTRACT_PATH)
 
-    # Automatically find the first .kml file in the extracted directory
     kml_files = [f for f in os.listdir(KML_EXTRACT_PATH) if f.lower().endswith('.kml')]
-    if not kml_files:
-        print(f"Error: No .kml file found in {KML_EXTRACT_PATH}. KMZ extraction may have failed or the archive does not contain a .kml file.")
-        exit(1)
     KML_PATH = os.path.join(KML_EXTRACT_PATH, kml_files[0])
-    print(f"Using extracted KML file: {KML_PATH}")
 
     screenshot_all_kml_locations(KML_PATH, API_KEY, OUT_DIR, size=SIZE, zoom=ZOOM, maptype=MAPTYPE)
-
-
