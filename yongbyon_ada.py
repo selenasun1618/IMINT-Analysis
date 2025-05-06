@@ -204,7 +204,7 @@ def main():
         fig.add_trace(radius_trace)
 
         fig.update_layout(
-            mapbox_style="maplibre",
+            mapbox_style="satellite",
             mapbox_center_lat=lat,
             mapbox_center_lon=lon,
             margin={"r":0,"t":0,"l":0,"b":0},
