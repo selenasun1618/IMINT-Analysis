@@ -8,6 +8,9 @@ import numpy as np
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
+from PIL import Image, ImageDraw
+import requests
+from math import cos, radians
 
 def extract_kmz(kmz_path, extract_to):
     """Extracts a KMZ file to the specified directory."""
@@ -60,7 +63,6 @@ def count_nearby_sites(placemark_data, target_coord, keywords, radius_miles):
                 matching_sites.append(site)
     return count, matching_sites
 
-
 def analyze_kmz_sites(kmz_path, kml_extract_path, kml_filename, target_sites, radius_miles, keywords):
     """
     Extracts KMZ, parses KML, and summarizes nearby sites.
@@ -98,6 +100,107 @@ def analyze_kmz_sites(kmz_path, kml_extract_path, kml_filename, target_sites, ra
 
     return summary_df, results
 
+def get_mapbox_satellite_image(lat, lon, zoom=10.63, width=600, height=400):
+    """
+    Get a satellite image from Mapbox API for the specified coordinates.
+    Returns the image as a PIL Image object.
+    """
+    access_token = os.environ.get('MAPBOX_TOKEN')
+    
+    if not access_token:
+        st.warning("MAPBOX_TOKEN environment variable is not set. Satellite imagery won't be available.")
+        return None
+    
+    base_url = "https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static"
+    bearing = 0
+    
+    url = f"{base_url}/{lon},{lat},{zoom},{bearing}/{width}x{height}"
+    
+    params = {
+        "access_token": access_token
+    }
+    
+    try:
+        response = requests.get(url, params=params)
+        
+        if response.status_code == 200:
+            return Image.open(io.BytesIO(response.content))
+        else:
+            st.error(f"Mapbox API request failed with status code: {response.status_code}")
+            return None
+    except Exception as e:
+        st.error(f"Error fetching satellite image: {str(e)}")
+        return None
+
+def draw_on_satellite_image(image, matching_sites, lat, lon, radius_miles, zoom_level):
+    """Draw markers and radius on the satellite image using PIL."""
+    if image is None:
+        return None
+        
+    # Create a draw object
+    draw = ImageDraw.Draw(image)
+    
+    # Image dimensions
+    width, height = image.size
+    center_x, center_y = width // 2, height // 2
+    
+    # Draw search radius (blue circle)
+    # Formula: degrees_per_pixel_lon = 360 / (256 * 2^zoom_level)
+    degrees_per_pixel_lon = 360.0 / (256 * (2 ** zoom_level))
+    delta_lon = width * degrees_per_pixel_lon  # width is image width in pixels
+    center_lat = lat
+    miles_per_deg_lon = 69.172 * cos(radians(center_lat))
+    map_width_miles = delta_lon * miles_per_deg_lon
+    miles_per_pixel = map_width_miles / width
+    radius_px = int(radius_miles / miles_per_pixel)
+
+    draw.ellipse(
+        [(center_x - radius_px, center_y - radius_px), 
+         (center_x + radius_px, center_y + radius_px)], 
+        outline="blue", width=2
+    )
+    
+    # Use accurate degrees-per-pixel for both longitude and latitude
+    degrees_per_pixel_lon = 360.0 / (256 * (2 ** zoom_level))
+    # Latitude: world map goes from -85.0511 to +85.0511 (Mercator)
+    lat_min = -85.0511
+    lat_max = 85.0511
+    degrees_per_pixel_lat = (lat_max - lat_min) / (256 * (2 ** zoom_level))
+
+    for site in matching_sites:
+        dx = (site['lon'] - lon) / degrees_per_pixel_lon
+        dy = -(site['lat'] - lat) / degrees_per_pixel_lat  # Negative because y increases downward
+        x, y = center_x + dx, center_y + dy
+
+        # Draw green circle for the site
+        draw.ellipse([(x-6, y-6), (x+6, y+6)], fill="green", outline="white", width=1)
+
+        # Alternative approach for text that's more visible
+        # Create small black rectangle behind text for better visibility
+        text = site['name']
+        text_width = len(text) * 7  # Rough estimate of text width
+        text_height = 15
+        draw.rectangle([(x+10, y-5), (x+10+text_width, y+text_height)], fill=(0, 0, 0, 128))
+        draw.text((x+12, y-3), text, fill="white")
+    
+    # Draw target location (red dot in center)
+    draw.ellipse([(center_x-8, center_y-8), (center_x+8, center_y+8)], 
+                 fill="red", outline="white", width=2)
+    
+    # Add legend
+    legend_x = 20
+    legend_y = height - 80
+    
+    # Target legend
+    draw.ellipse([(legend_x, legend_y), (legend_x+16, legend_y+16)], fill="red", outline="white", width=2)
+    draw.text((legend_x+25, legend_y+3), "Target Location", fill="white")
+    
+    # Sites legend
+    draw.ellipse([(legend_x, legend_y+30), (legend_x+16, legend_y+30+16)], fill="green", outline="white", width=1)
+    draw.text((legend_x+25, legend_y+30+3), "Matching Sites", fill="white")
+    
+    return image
+
 def main():
     st.title("Yongbyon ADA Analysis")
 
@@ -127,6 +230,12 @@ def main():
     keywords_str = st.sidebar.text_input("Keywords (comma separated)", value="aaa")
     keywords = [k.strip().lower() for k in keywords_str.split(",") if k.strip()]
 
+    # Map settings
+    st.sidebar.header("Map Settings")
+    zoom_level = st.sidebar.slider("Zoom Level", min_value=9.0, max_value=16.0, value=12.0, step=0.5)
+    map_width = st.sidebar.slider("Map Width (px)", min_value=400, max_value=1200, value=800, step=100)
+    map_height = st.sidebar.slider("Map Height (px)", min_value=300, max_value=800, value=600, step=100)
+
     # Extract and parse KMZ/KML
     extract_kmz(kmz_path, kml_extract_path)
     kml_file_path = os.path.join(kml_extract_path, kml_filename)
@@ -148,7 +257,7 @@ def main():
                 '  <Document>'
             ]
             for site in sites:
-                kml.append(f'''    <Placemark>\n      <name>{site['name']}</name>\n      <Point><coordinates>{site['lon']},{site['lat']},0</coordinates></Point>\n    </Placemark>''')
+                kml.append(f'''    <Placemark>\n      <n>{site['name']}</n>\n      <Point><coordinates>{site['lon']},{site['lat']},0</coordinates></Point>\n    </Placemark>''')
             kml.append('  </Document>')
             kml.append('</kml>')
             return '\n'.join(kml)
@@ -159,62 +268,79 @@ def main():
         with zipfile.ZipFile(kmz_buf, 'w', zipfile.ZIP_DEFLATED) as kmz:
             kmz.writestr('doc.kml', kml_bytes)
         kmz_buf.seek(0)
-        st.download_button(
-            label="Download found sites as KMZ",
-            data=kmz_buf,
-            file_name=f"found_sites_{radius_miles}miles_{'_'.join(keywords)}.kmz",
-            mime="application/vnd.google-earth.kmz"
-        )
 
-        # Plot map with pins and a radius circle using scattermap (Plotly Maplibre)
-        fig = px.scatter_map(
-            df,
-            lat="lat",
-            lon="lon",
-            hover_name="name",
-            zoom=9,
-            height=600,
-        )
-        # Add target location as a marker (with legend)
-        target_trace = px.scatter_map(
-            pd.DataFrame({"lat": [lat], "lon": [lon], "name": ["Target Site"]}),
-            lat="lat", lon="lon", hover_name="name",
-            size=[16], color_discrete_sequence=["red"]
-        ).data[0]
-        target_trace.name = "Target Site"
-        target_trace.showlegend = True
-        fig.add_trace(target_trace)
-        # Draw a circle for the search radius using line_map (with legend)
-        theta = np.linspace(0, 2 * np.pi, 100)
-        earth_radius = 3958.8  # miles
-        dlat = (radius_miles / earth_radius) * (180 / np.pi)
-        dlon = dlat / np.cos(np.radians(lat))
-        circle_lat = lat + dlat * np.sin(theta)
-        circle_lon = lon + dlon * np.cos(theta)
-        circle_df = pd.DataFrame({"lat": circle_lat, "lon": circle_lon})
-        radius_trace = px.line_map(
-            circle_df,
-            lat="lat",
-            lon="lon",
-        ).data[0]
-        radius_trace.line = dict(width=2, color="blue")
-        radius_trace.name = f"{radius_miles} mile radius"
-        radius_trace.showlegend = True
-        fig.add_trace(radius_trace)
-
-        fig.update_layout(
-            mapbox_style="satellite-streets",
-            mapbox_center_lat=lat,
-            mapbox_center_lon=lon,
-            margin={"r":0,"t":0,"l":0,"b":0},
-            mapbox_zoom=9,
-            autosize=True,
-            dragmode='zoom',
-        )
-        st.plotly_chart(fig, use_container_width=True)
-        st.write("")
-        st.write("")
-        st.write("")
+        # Create a satellite map with sites marked
+        with st.spinner("Fetching satellite imagery..."):
+            satellite_image = get_mapbox_satellite_image(lat, lon, zoom=zoom_level, width=map_width, height=map_height)
+            
+            if satellite_image:
+                # Draw markers and radius on the image
+                satellite_image_with_markers = draw_on_satellite_image(
+                    satellite_image.copy(), matching_sites, lat, lon, radius_miles, zoom_level
+                )
+                
+                # Display the image
+                st.write("### Satellite Map")
+                st.image(satellite_image_with_markers, caption=f"Target: ({lat}, {lon}) | Radius: {radius_miles} miles | Found: {count} sites")
+                
+                # Save the image for download
+                img_path = "satellite_with_markers.png"
+                satellite_image_with_markers.save(img_path)
+                
+                # Add download button for the satellite image
+                with open(img_path, "rb") as file:
+                    st.download_button(
+                        label="Download Satellite Image with Markers",
+                        data=file,
+                        file_name=f"satellite_{lat}_{lon}_zoom{zoom_level}.png",
+                        mime="image/png"
+                    )
+            else:
+                st.error("Could not fetch satellite imagery. Please check your MAPBOX_TOKEN environment variable.")
+                
+                st.write("### Fallback Map (Satellite imagery unavailable)")
+                fig = px.scatter_mapbox(
+                    df,
+                    lat="lat",
+                    lon="lon",
+                    hover_name="name",
+                    zoom=zoom_level,
+                    height=map_height,
+                    width=map_width,
+                )
+                
+                # Add target location as a marker
+                fig.add_trace(go.Scattermapbox(
+                    lat=[lat],
+                    lon=[lon],
+                    mode="markers",
+                    marker=dict(size=15, color="red"),
+                    name="Target Site",
+                ))
+                
+                # Setup the map layout
+                fig.update_layout(
+                    mapbox_style="open-street-map",  # Fallback to OSM when no token
+                    mapbox_center_lat=lat,
+                    mapbox_center_lon=lon,
+                    margin={"r":0,"t":0,"l":0,"b":0},
+                    mapbox_zoom=zoom_level,
+                )
+                
+                st.plotly_chart(fig)
+        
+        # Add a download button for the current map data
+        with io.StringIO() as buffer:
+            df.to_csv(buffer, index=False)
+            st.download_button(
+                label="Download Sites Data (CSV)",
+                data=buffer.getvalue(),
+                file_name=f"sites_data_{lat}_{lon}_{radius_miles}miles.csv",
+                mime="text/csv"
+            )
+        
+        # Display tabular data
+        st.write("### Found Sites")
         st.dataframe(df)
     else:
         st.warning("No matching sites found.")
