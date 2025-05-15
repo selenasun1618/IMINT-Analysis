@@ -104,10 +104,15 @@ def get_mapbox_satellite_image(lat, lon, zoom=10.63, width=600, height=400):
     Get a satellite image from Mapbox API for the specified coordinates.
     Returns the image as a PIL Image object.
     """
-    access_token = st.secrets["MAPBOX_TOKEN"]
+    # Try to get token from Streamlit secrets first, then fall back to environment variables
+    try:
+        access_token = st.secrets['MAPBOX_TOKEN']
+    except KeyError:
+        import os
+        access_token = os.environ.get("MAPBOX_TOKEN")
     
     if not access_token:
-        st.warning("MAPBOX_TOKEN environment variable is not set. Satellite imagery won't be available.")
+        st.warning("Mapbox token not found in secrets or environment variables. Satellite imagery won't be available.")
         return None
     
     base_url = "https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static"
