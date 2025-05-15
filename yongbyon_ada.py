@@ -287,16 +287,27 @@ def main():
                 st.write("### Satellite Map")
                 st.image(satellite_image_with_markers, caption=f"Target: ({lat}, {lon}) | Radius: {radius_miles} miles | Found: {count} sites")
                 
-                # Save the image for download
-                img_path = "satellite_with_markers.png"
-                satellite_image_with_markers.save(img_path)
+                # Save the images for download
+                img_with_markers_path = "satellite_with_markers.png"
+                img_original_path = "satellite_original.png"
+                satellite_image_with_markers.save(img_with_markers_path)
+                satellite_image.save(img_original_path)
                 
-                # Add download button for the satellite image
-                with open(img_path, "rb") as file:
+                # Add download button for the original satellite image without markers
+                with open(img_original_path, "rb") as file:
+                    st.download_button(
+                        label="Download Satellite Image",
+                        data=file,
+                        file_name=f"satellite_{lat}_{lon}_zoom{zoom_level}_original.png",
+                        mime="image/png"
+                    )
+
+                # Add download button for the satellite image with markers
+                with open(img_with_markers_path, "rb") as file:
                     st.download_button(
                         label="Download Satellite Image with Markers",
                         data=file,
-                        file_name=f"satellite_{lat}_{lon}_zoom{zoom_level}.png",
+                        file_name=f"satellite_{lat}_{lon}_zoom{zoom_level}_with_markers.png",
                         mime="image/png"
                     )
             else:
@@ -332,6 +343,10 @@ def main():
                 )
                 
                 st.plotly_chart(fig)
+
+        # Display tabular data
+        st.write("### Found Sites")
+        st.dataframe(df)
         
         # Add a download button for the current map data
         with io.StringIO() as buffer:
@@ -342,10 +357,6 @@ def main():
                 file_name=f"sites_data_{lat}_{lon}_{radius_miles}miles.csv",
                 mime="text/csv"
             )
-        
-        # Display tabular data
-        st.write("### Found Sites")
-        st.dataframe(df)
     else:
         st.warning("No matching sites found.")
 
