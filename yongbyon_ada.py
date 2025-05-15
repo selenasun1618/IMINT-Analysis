@@ -104,7 +104,7 @@ def get_mapbox_satellite_image(lat, lon, zoom=10.63, width=600, height=400):
     Get a satellite image from Mapbox API for the specified coordinates.
     Returns the image as a PIL Image object.
     """
-    access_token = os.environ.get('MAPBOX_TOKEN')
+    access_token = st.secrets['MAPBOX_TOKEN']
     
     if not access_token:
         st.warning("MAPBOX_TOKEN environment variable is not set. Satellite imagery won't be available.")
@@ -297,7 +297,7 @@ def main():
             else:
                 st.error("Could not fetch satellite imagery. Please check your MAPBOX_TOKEN environment variable.")
                 
-                st.write("### Fallback Map (Satellite imagery unavailable)")
+                st.write("### Fallback Map")
                 fig = px.scatter_mapbox(
                     df,
                     lat="lat",
