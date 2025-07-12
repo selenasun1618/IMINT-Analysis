@@ -285,7 +285,7 @@ if __name__ == "__main__":
     
     # Set up command line argument parsing
     parser = argparse.ArgumentParser(description='Take screenshots of CSV coordinate locations using Google Maps Static API')
-    parser.add_argument('--csv', default="../AAA.csv", help='Path to CSV file')
+    parser.add_argument('--csv', default="coordinates/AAA.csv", help='Path to CSV file')
     parser.add_argument('--output', default="google_earth_images", help='Output directory for screenshots')
     parser.add_argument('--distance', type=float, default=1.0, 
                         help='Ground distance in kilometers (width/height of the image)')
