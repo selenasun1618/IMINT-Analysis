@@ -159,7 +159,7 @@ def calculate_zoom_level(ground_distance_km, image_size_px=640):
     
     return best_zoom
 
-def build_gmaps_static_url(lat, lon, api_key, ground_distance_km=1.0, image_size=640, maptype='satellite', timestamp=None):
+def build_gmaps_static_url(lat, lon, api_key, ground_distance_km=1.0, image_size=640, maptype='satellite', timestamp=None, scale=2):
     """Constructs a Google Maps Static API URL for a given location.
     
     Args:
@@ -178,6 +178,7 @@ def build_gmaps_static_url(lat, lon, api_key, ground_distance_km=1.0, image_size
         'center': f"{lat},{lon}",
         'zoom': str(zoom),
         'size': f"{image_size}x{image_size}",
+        'scale': str(scale),
         'maptype': maptype,
         'key': api_key
     }
@@ -225,8 +226,7 @@ def save_static_map_image(lat, lon, name, api_key, out_dir, ground_distance_km=1
     response = requests.get(url)
     if response.status_code == 200:
         # Include timestamp in filename if provided
-        timestamp_str = f"_{timestamp}" if timestamp else ""
-        filename = f"{name.replace(' ', '_')}_{lat:.5f}_{lon:.5f}_{ground_distance_km}km{timestamp_str}_{image_size}x{image_size}.png"
+        filename = f"{name.replace(' ', '_')}_{lat:.5f}_{lon:.5f}_{ground_distance_km}km.png"
         filepath = os.path.join(out_dir, filename)
         with open(filepath, 'wb') as f:
             f.write(response.content)
@@ -253,9 +253,7 @@ def screenshot_all_csv_locations(csv_path, api_key, base_out_dir, ground_distanc
         timestamp: Optional timestamp for historical imagery (format: 'YYYY-MM-DD', 'YYYY-MM', or Unix timestamp)
     """
     # Create subfolder name based on distance and resolution
-    folder_name = f"{ground_distance_km}km_{image_size}x{image_size}_{maptype}"
-    if timestamp:
-        folder_name += f"_{timestamp}"
+    folder_name = f"AAA_{ground_distance_km}km_images"
     
     out_dir = os.path.join(base_out_dir, folder_name)
     os.makedirs(out_dir, exist_ok=True)
@@ -289,7 +287,7 @@ if __name__ == "__main__":
     parser.add_argument('--output', default="google_earth_images", help='Output directory for screenshots')
     parser.add_argument('--distance', type=float, default=0.5, 
                         help='Ground distance in kilometers (width/height of the image)')
-    parser.add_argument('--size', type=int, default=1280, 
+    parser.add_argument('--size', type=int, default=640, 
                         help='Image size in pixels (square image)')
     parser.add_argument('--maptype', default="satellite", 
                         choices=['roadmap', 'satellite', 'hybrid', 'terrain'], 

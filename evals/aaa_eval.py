@@ -33,7 +33,7 @@ def create_jsonl_file(): # TODO
 
     data = {
         "item": {
-            "image": image_to_data_url("AAA_37.82494_126.61849_0.5km_1000x1000.png"),
+            "image_url": image_to_data_url("AAA_37.82494_126.61849_0.5km_1000x1000.png"),
             "aaa_present": "Hardware"  # Example value TODO
         }
     }
@@ -46,6 +46,14 @@ def create_jsonl_file(): # TODO
     return jsonl_path
 
 # Upload files
+def upload_image(image_path):
+    with open(image_path, "rb") as img_file:
+        file = client.files.create(
+            file=img_file,
+            purpose="vision"
+        )
+    return file
+
 def upload_files(jsonl_path):
     file = client.files.create(
         file=open(jsonl_path, "rb"),
@@ -64,9 +72,9 @@ def create_eval():
                 "properties": {
                     "aaa_present": {"type": "string"},
                     "image_name": {"type": "string"},
-                    "image": {"type": "string"}, # Base64 encoded image URL
+                    "image_url": {"type": "image_url"},
                 },
-                "required": ["image", "aaa_present", "image_name"],
+                "required": ["image_url", "aaa_present", "image_name"],
             },
             "include_sample_schema": True
         },
@@ -92,6 +100,13 @@ def run_eval(eval_id, file_id):
     You are to decide whether the given image contains an AAA site or not.
     """
 
+    user_prompt = """
+    Would you guess this iamge contains an anti-aircraft artillery (AAA) site?
+    If yes, answer "yes". If no, answer "no". ONLY stick to "yes" or "no" as your answer. Here is the image:
+    {{ item.image_url }}
+    """
+    # TODO - strutured output?
+
     eval_run = client.evals.runs.create(
         eval_id=eval_id,
         name="AAA Eval Run",
@@ -108,7 +123,7 @@ def run_eval(eval_id, file_id):
                     },
                     {
                         "role": "user",
-                        "content": "{{ item.image }}"
+                        "content": user_prompt
                     }
                 ]
             }
@@ -119,18 +134,25 @@ def run_eval(eval_id, file_id):
 
 def main():
     # Upload the image file
-    img_name = "AAA_37.82494_126.61849_0.5km_1000x1000.png"
+    img_name = "google_earth_images/AAA_0.5km_images/AAA_39.43296_125.93912_0.5km.png"
     img_url = image_to_data_url(img_name)
-    jsonl_path = Path("aaa_eval.jsonl").resolve()
+    jsonl_path = Path("evals/aaa_eval.jsonl").resolve()
+    print(f"Creating JSONL file at: {jsonl_path}")
+
+    # Try uploading the image beforehand
+    img_file = upload_image(img_name)
+    content = client.files.content(img_file.id)
 
     record = {
         "item": {
-            "aaa_present": "yes",
+            "aaa_present": "no",
             "image_name": img_name,
-            "image": img_url,
+            "image_url": img_url,
+            # "image_url": "https://imgur.com/a/AOjeaKF",
+            # "image_url": img_url, # "https://upload.wikimedia.org/wikipedia/commons/b/b3/Vista_Satelital_de_Nohyaxch%C3%A9_y_Edzn%C3%A1%2C_Campeche.png?20250628214204"
         }
     }
-    with open(jsonl_path, "a", encoding="utf-8") as f:
+    with open(jsonl_path, "w", encoding="utf-8") as f:
         f.write(json.dumps(record, ensure_ascii=False))
         f.write("\n")
 
@@ -138,15 +160,20 @@ def main():
     print(f"File uploaded: {file.id}")
 
     # Create the eval
-    eval_obj = create_eval()
-    print(f"\nEval created: {eval_obj.id}")
+    # eval_obj = create_eval()
+    # print(f"Eval created: {eval_obj.id}")
+    eval_obj_id = "eval_68750ce75e208191b4a2623a46b8809a"
 
     # Run the eval
-    eval_run = run_eval(eval_id=eval_obj.id, file_id=file.id)
-    print(f"\nEval run started: {eval_run.id}")
+    eval_run = run_eval(eval_id=eval_obj_id, file_id=file.id)
+    print(f"Eval run started: {eval_run.id}")
 
-    run = client.evals.runs.retrieve(eval_id=eval_obj.id, run_id=eval_run.id)
-    print(f"\nEval run status: {run.status}")
+    run = client.evals.runs.retrieve(eval_id=eval_obj_id, run_id=eval_run.id)
+    print(f"Eval run status: {run.status}")
 
 if __name__ == "__main__":
     main()
+    # jsonl_path = Path("aaa_eval.jsonl").resolve()
+    # print(f"Creating JSONL file at: {jsonl_path}")
+    # file = upload_files(jsonl_path=jsonl_path)
+    # print(f"File uploaded: {file.id}")
