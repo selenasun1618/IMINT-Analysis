@@ -1,15 +1,50 @@
-import base64
+import os
 import json
-import mimetypes
+from datetime import datetime
 from pathlib import Path
 from openai import OpenAI
 client = OpenAI(api_key="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")
 
-
-def create_jsonl_file():
+def create_jsonl_file(jsonl_path):
     """Create a JSONL file with the image and AAA presence."""
-    github_url = "https://github.com/selenasun1618/IMINT-Images/blob/main/google_earth_images/"
-    file_path = Path("evals/aaa_eval.jsonl").resolve()
+    github_url = "https://github.com/selenasun1618/IMINT-Images/blob/main/"
+    local_dir = "../IMINT-Images/"
+    AAA_local_folder = "AAA_eval_images/"
+    Non_AAA_local_folder = "Non_AAA_eval_images/"
+
+    total_written = 0
+
+    with open(jsonl_path, "w", encoding="utf-8") as f:  # Overwrite on each run
+        # Process AAA images
+        aaa_path = os.path.join(local_dir, AAA_local_folder)
+        for img_name in os.listdir(aaa_path):
+            if img_name.lower().endswith(('.png', '.jpg', '.jpeg')):
+                record = {
+                    "item": {
+                        "aaa_present": "yes",
+                        "image_name": img_name,
+                        "image_url": f"{github_url}{AAA_local_folder}{img_name}?raw=true",
+                    }
+                }
+                f.write(json.dumps(record, ensure_ascii=False) + "\n")
+                total_written += 1
+
+        # Process Non-AAA images
+        non_aaa_path = os.path.join(local_dir, Non_AAA_local_folder)
+        for img_name in os.listdir(non_aaa_path):
+            if img_name.lower().endswith(('.png', '.jpg', '.jpeg')):
+                record = {
+                    "item": {
+                        "aaa_present": "no",
+                        "image_name": img_name,
+                        "image_url": f"{github_url}{Non_AAA_local_folder}{img_name}?raw=true",
+                    }
+                }
+                f.write(json.dumps(record, ensure_ascii=False) + "\n")
+                total_written += 1
+
+    print(f"✅ JSONL file created at '{jsonl_path}' with {total_written} entries.")
+
 
 def upload_files(jsonl_path):
     file = client.files.create(
@@ -90,35 +125,24 @@ def run_eval(eval_id, file_id):
     return eval_run
 
 def main():
-    # Upload the image file
-    img_name = "google_earth_images/AAA_0.5km_images/AAA_39.43296_125.93912_0.5km.png"
+
+    # 1. Create JSONL file
+    # timestamp = datetime.now().strftime("%m%d_%H%M")
+    # jsonl_path = Path(f"evals/aaa_eval_{timestamp}.jsonl").resolve()
+    # print(f"Creating JSONL file at: {jsonl_path}")
+    # create_jsonl_file(jsonl_path)
+
+    # 2. Upload the JSONL file to OpenAI
     jsonl_path = Path("evals/aaa_eval.jsonl").resolve()
-    print(f"Creating JSONL file at: {jsonl_path}")
-
-    # # Try uploading the image beforehand
-    # img_file = upload_image(img_name)
-    # content = client.files.content(img_file.id)
-
-    record = {
-        "item": {
-            "aaa_present": "no",
-            "image_name": img_name,
-            "image_url": "https://github.com/selenasun1618/IMINT-Images/blob/main/google_earth_images/AAA_0.5km_images/AAA_(e)_37.96253_126.64923_0.5km.png?raw=true",
-        }
-    }
-    with open(jsonl_path, "w", encoding="utf-8") as f:
-        f.write(json.dumps(record, ensure_ascii=False))
-        f.write("\n")
-
     file = upload_files(jsonl_path=jsonl_path)
-    print(f"File uploaded: {file.id}")
+    print(f"Jsonl file uploaded: {file.id}")
 
-    # Create the eval
+    # 3. Create the eval
     # eval_obj = create_eval()
     # print(f"Eval created: {eval_obj.id}")
     eval_obj_id = "eval_68750ce75e208191b4a2623a46b8809a"
 
-    # Run the eval
+    # 4. Run the eval
     eval_run = run_eval(eval_id=eval_obj_id, file_id=file.id)
     print(f"Eval run started: {eval_run.id}")
 
@@ -127,7 +151,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    # jsonl_path = Path("aaa_eval.jsonl").resolve()
-    # print(f"Creating JSONL file at: {jsonl_path}")
-    # file = upload_files(jsonl_path=jsonl_path)
-    # print(f"File uploaded: {file.id}")
