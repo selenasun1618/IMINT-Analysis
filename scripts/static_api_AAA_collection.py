@@ -207,84 +207,74 @@ def build_gmaps_static_url(lat, lon, api_key, ground_distance_km=1.0, image_size
     return f"{base_url}?{param_str}"
 
 def save_static_map_image(lat, lon, name, api_key, out_dir, ground_distance_km=1.0, image_size=640, maptype='satellite', timestamp=None, current=None, total=None):
-    """Downloads and saves a Google Maps Static image for the location.
-    
-    Args:
-        lat: Latitude coordinate
-        lon: Longitude coordinate
-        name: Name of the location (used for filename)
-        api_key: Google Maps API key
-        out_dir: Directory to save images to
-        ground_distance_km: Desired ground distance in kilometers (width/height of the image)
-        image_size: Size of the image in pixels (square image)
-        maptype: Map type ('roadmap', 'satellite', 'hybrid', 'terrain')
-        timestamp: Optional timestamp for historical imagery (format: 'YYYY-MM-DD', 'YYYY-MM', or Unix timestamp)
-        current: Current image number (for progress reporting)
-        total: Total number of images (for progress reporting)
-    """
+    """Downloads and saves a Google Maps Static image for the location if valid imagery is available."""
     url = build_gmaps_static_url(lat, lon, api_key, ground_distance_km, image_size, maptype, timestamp)
     response = requests.get(url)
+
     if response.status_code == 200:
-        # Include timestamp in filename if provided
+        # Check if response is the "no imagery" placeholder
+        if b"Sorry, we have no imagery here" in response.content:
+            print(f"No imagery at ({lat}, {lon}) — skipping.")
+            return False  # indicates no image saved
+
         filename = f"{name.replace(' ', '_')}_{lat:.5f}_{lon:.5f}_{ground_distance_km}km.png"
         filepath = os.path.join(out_dir, filename)
         with open(filepath, 'wb') as f:
             f.write(response.content)
-        if current is not None and total is not None:
-            print(f"Saved ({current}/{total}): {filepath}")
-        else:
-            print(f"Saved: {filepath}")
+        print(f"Saved ({current}/{total}): {filepath}")
+        return True  # image saved
     else:
         print(f"Failed to fetch image for {name} ({lat}, {lon}): {response.status_code} - {response.text}")
+        return False  # image not saved
 
+
+import glob
 
 def screenshot_all_csv_locations(csv_path, api_key, base_out_dir, ground_distance_km=1.0, image_size=640, maptype='satellite', timestamp=None):
-    """Takes screenshots of all CSV locations using the Google Maps Static API.
-    Only processes rows where Y/N is 'Y' and IMDATE Visible is empty.
-    Creates a subfolder for each distance/resolution combination.
-    
-    Args:
-        csv_path: Path to the CSV file
-        api_key: Google Maps API key
-        base_out_dir: Base output directory for screenshots
-        ground_distance_km: Desired ground distance in kilometers (width/height of the image)
-        image_size: Size of the image in pixels (square image)
-        maptype: Map type ('roadmap', 'satellite', 'hybrid', 'terrain')
-        timestamp: Optional timestamp for historical imagery (format: 'YYYY-MM-DD', 'YYYY-MM', or Unix timestamp)
-    """
-    # Create subfolder name based on distance and resolution
-    folder_name = f"AAA_{ground_distance_km}km_images"
-    
-    out_dir = os.path.join(base_out_dir, folder_name)
+    out_dir = base_out_dir
     os.makedirs(out_dir, exist_ok=True)
-    
+
     coordinates = parse_csv_coordinates(csv_path)
     total = len(coordinates)
-    print(f"Total images to screenshot: {total}")
-    print(f"Ground distance per image: {ground_distance_km} km")
-    print(f"Image size: {image_size}x{image_size} pixels")
-    print(f"Map type: {maptype}")
+    print(f"Total coordinates to process: {total}")
     print(f"Output folder: {out_dir}")
-    print(f"Processing coordinates where Y/N='Y' and IMDATE Visible is empty")
-    
+
+    saved_count = 0
     for idx, coord in enumerate(coordinates, 1):
-        save_static_map_image(
+        # Build expected filename to check for existence
+        expected_filename = f"{coord['name'].replace(' ', '_')}_{coord['lat']:.5f}_{coord['lon']:.5f}_{ground_distance_km}km.png"
+        expected_path = os.path.join(out_dir, expected_filename)
+        
+        # Skip if file already exists
+        if os.path.exists(expected_path):
+            print(f"Skipping ({saved_count+1}/{total}): {expected_filename} already exists")
+            saved_count += 1
+            continue
+
+        # Attempt to fetch/save image
+        success = save_static_map_image(
             coord['lat'], coord['lon'], coord['name'], api_key, out_dir, 
             ground_distance_km=ground_distance_km, 
             image_size=image_size, 
             maptype=maptype,
             timestamp=timestamp, 
-            current=idx, 
+            current=saved_count + 1, 
             total=total
         )
+        if success:
+            saved_count += 1
+
+    print(f"\n✅ Finished. {saved_count} valid images saved out of {len(coordinates)} locations.")
+
+
 
 if __name__ == "__main__":
     import argparse
     
     # Set up command line argument parsing
-    parser = argparse.ArgumentParser(description='Take screenshots of CSV coordinate locations using Google Maps Static API')
-    parser.add_argument('--csv', default="coordinates/AAA.csv", help='Path to CSV file')
-    parser.add_argument('--output', default="google_earth_images", help='Output directory for screenshots')
+    parser = argparse.ArgumentParser(description='Collect satellite images of CSV coordinate locations using Google Maps Static API')
+    parser.add_argument('--csv', default="coordinates/non_aaa_nk_coords_500.csv", help='Path to CSV file')
+    parser.add_argument('--output', default="../IMINT-Images/Non_AAA_training_images", help='Output directory for screenshots')
     parser.add_argument('--distance', type=float, default=0.5, 
                         help='Ground distance in kilometers (width/height of the image)')
     parser.add_argument('--size', type=int, default=640, 
