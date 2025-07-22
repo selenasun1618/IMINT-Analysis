@@ -54,7 +54,6 @@ def upload_files(jsonl_path):
     return file
 
 def create_eval():
-    # Create eval
     eval_obj = client.evals.create(
         name="AAA Eval",
         data_source_config={
@@ -104,7 +103,7 @@ def run_eval(eval_id, file_id):
         name="AAA Eval Run",
         data_source={
             "type": "completions",
-            "model": "gpt-4o-2024-08-06", # Vision fine-tuning (https://platform.openai.com/docs/guides/vision-fine-tuning)
+            "model": "ft:gpt-4o-2024-08-06:vannevar-labs::Buk6Uyac", #"gpt-4o-2024-08-06", # Fine-Tuned Model
             "source": {"type": "file_id", "id": file_id},
             "input_messages": {
                 "type": "template",
