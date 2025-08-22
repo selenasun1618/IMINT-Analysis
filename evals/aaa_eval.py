@@ -73,7 +73,7 @@ def create_eval():
             {
                 "name": "AAA classification grader",
                 "type": "string_check",
-                "input": "{{ sample.output_text }}",
+                "input": "{{ sample.output_text.strip().lower() }}",
                 "operation": "eq",
                 "reference": "{{ item.aaa_present }}"
             }
@@ -82,7 +82,7 @@ def create_eval():
     return eval_obj
 
 
-def run_eval(eval_id, file_id):
+def run_eval(eval_id, file_id, model="gpt-4o-2024-08-06"):
     """Run the eval with the given ID and file path."""
 
     developer_prompt = """
@@ -103,7 +103,19 @@ def run_eval(eval_id, file_id):
         name="AAA Eval Run",
         data_source={
             "type": "completions",
-            "model": "ft:gpt-4o-2024-08-06:vannevar-labs::Buk6Uyac", #"gpt-4o-2024-08-06", # Fine-Tuned Model
+            "model": model,
+            "temperature": 0,
+            "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "aaa_presence",
+                    "schema": {
+                        "type": "string",
+                        "enum": ["yes", "no"]
+                    },
+                    "strict": True
+                }
+            },
             "source": {"type": "file_id", "id": file_id},
             "input_messages": {
                 "type": "template",
@@ -142,7 +154,9 @@ def main():
     eval_obj_id = "eval_68750ce75e208191b4a2623a46b8809a"
 
     # 4. Run the eval
-    eval_run = run_eval(eval_id=eval_obj_id, file_id=file.id)
+    # model = "ft:gpt-4o-2024-08-06:vannevar-labs::Buk6Uyac"
+    model = "gpt-4o-2024-08-06"
+    eval_run = run_eval(eval_id=eval_obj_id, file_id=file.id, model=model)
     print(f"Eval run started: {eval_run.id}")
 
     run = client.evals.runs.retrieve(eval_id=eval_obj_id, run_id=eval_run.id)
