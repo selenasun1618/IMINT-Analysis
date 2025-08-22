@@ -95,7 +95,7 @@ def main():
 
     saved = 0
     for idx, (tlat, tlon) in enumerate(centers, 1):
-        name = f"{args.name_prefix}_{idx:04d}"
+        name = f"{args.name_prefix}"
         ok = save_static_map_image(
             tlat,
             tlon,

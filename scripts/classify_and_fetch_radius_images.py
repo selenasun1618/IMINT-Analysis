@@ -99,6 +99,11 @@ def classify_image_url(client: OpenAI, model: str, image_url: str) -> str:
         return "no"
 
 
+def _sanitize_tag(s: str) -> str:
+    """Sanitize a tag for folder names (replace problematic chars)."""
+    return str(s).replace(":", "_").replace("/", "_").replace("\\", "_")
+
+
 def main():
     import argparse
 
@@ -130,7 +135,11 @@ def main():
 
     client = OpenAI(api_key=openai_key)
 
-    os.makedirs(args.output, exist_ok=True)
+    # Build structured output subfolder: <output>/<lat>_<lon>_R<radius>km_T<tile>km_<model>
+    model_tag = _sanitize_tag(args.model)
+    subfolder = f"{args.lat:.5f}_{args.lon:.5f}_R{args.radius_km}km_T{args.tile_km}km_{model_tag}"
+    out_dir = os.path.join(args.output, subfolder)
+    os.makedirs(out_dir, exist_ok=True)
 
     centers = list(generate_tile_centers(args.lat, args.lon, args.radius_km, args.tile_km))
     total = len(centers)
@@ -139,7 +148,7 @@ def main():
     print(f"  Center: ({args.lat}, {args.lon})")
     print(f"  Radius: {args.radius_km} km")
     print(f"  Tile size: {args.tile_km} km; image size: {args.size}")
-    print(f"  Output directory (only 'yes' saved): {args.output}")
+    print(f"  Output directory (only 'yes' saved): {out_dir}")
     print(f"  Model: {args.model}")
     print(f"  Total tiles to evaluate: {total}")
 
@@ -161,13 +170,14 @@ def main():
         print(f"[{idx}/{total}] Classification: {label} at ({tlat:.5f},{tlon:.5f})")
 
         if label == "yes":
-            name = f"{args.name_prefix}_{idx:04d}"
+            # Filenames do not include numeric indices; helper will append lat/lon/km.
+            name = f"{args.name_prefix}"
             ok = save_static_map_image(
                 tlat,
                 tlon,
                 name,
                 gmaps_key,
-                args.output,
+                out_dir,
                 ground_distance_km=args.tile_km,
                 image_size=args.size,
                 maptype=args.maptype,
