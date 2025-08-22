@@ -1,6 +1,7 @@
 import os
 import math
 import time
+import json
 from typing import Iterator, Tuple
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -54,7 +55,7 @@ def generate_tile_centers(lat: float, lon: float, radius_km: float, tile_km: flo
         lat_val = min_lat + i * dlat_deg
 
 
-def classify_image_url(client: OpenAI, model: str, image_url: string) -> str:
+def classify_image_url(client: OpenAI, model: str, image_url: str) -> str:
     """Return 'yes' or 'no' using the model on an image URL with structured output."""
     try:
         resp = client.chat.completions.create(
@@ -64,14 +65,21 @@ def classify_image_url(client: OpenAI, model: str, image_url: string) -> str:
                 "type": "json_schema",
                 "json_schema": {
                     "name": "aaa_presence",
-                    "schema": {"type": "string", "enum": ["yes", "no"]},
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "aaa_present": {"type": "string", "enum": ["yes", "no"]}
+                        },
+                        "required": ["aaa_present"],
+                        "additionalProperties": False
+                    },
                     "strict": True,
                 },
             },
             messages=[
                 {
                     "role": "developer",
-                    "content": "You are an expert nuclear analyst. Classify if the image contains an anti-aircraft artillery (AAA) site. Respond only 'yes' or 'no'.",
+                    "content": "You are an expert nuclear analyst. Classify if the image contains an anti-aircraft artillery (AAA) site. Respond only with a JSON object {\"aaa_present\": \"yes\"|\"no\"}.",
                 },
                 {
                     "role": "user",
@@ -82,7 +90,9 @@ def classify_image_url(client: OpenAI, model: str, image_url: string) -> str:
                 },
             ],
         )
-        ans = (resp.choices[0].message.content or "").strip().strip('"').lower()
+        raw = (resp.choices[0].message.content or "").strip()
+        data = json.loads(raw)
+        ans = str(data.get("aaa_present", "no")).strip().lower()
         return "yes" if ans == "yes" else "no"
     except Exception as e:
         print(f"Classification error: {e}")
@@ -96,13 +106,13 @@ def main():
     parser.add_argument("--lat", type=float, required=True, help="Center latitude")
     parser.add_argument("--lon", type=float, required=True, help="Center longitude")
     parser.add_argument("--radius_km", type=float, required=True, help="Radius in kilometers")
-    parser.add_argument("--output", default="../IMINT-Images/AAA_test_images_NK", help="Output directory for images (only 'yes' saved)")
+    parser.add_argument("--output", default="../IMINT-Images/AAA_found_NK", help="Output directory for images (only 'yes' saved)")
     parser.add_argument("--tile_km", type=float, default=2.0, help="Tile width/height in km (default 2.0)")
-    parser.add_argument("--size", type=int, default=640, help="Image size in pixels (square)")
+    parser.add_argument("--size", type=int, default=1024, help="Image size in pixels (square)")
     parser.add_argument("--maptype", default="satellite", choices=["roadmap", "satellite", "hybrid", "terrain"], help="Map type")
     parser.add_argument("--date", help="Date for historical imagery (YYYY-MM or YYYY-MM-DD)")
     parser.add_argument("--name_prefix", default="AAA", help="Filename prefix for saved images")
-    parser.add_argument("--model", default="gpt-4o-2024-08-06", help="OpenAI model (use your fine-tuned model id if available)")
+    parser.add_argument("--model", default="ft:gpt-4o-2024-08-06:vannevar-labs::Buk6Uyac", help="OpenAI model (use your fine-tuned model id if available)")
     parser.add_argument("--sleep", type=float, default=0.2, help="Sleep seconds between classifications to avoid rate limits")
 
     args = parser.parse_args()
