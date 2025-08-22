@@ -198,8 +198,8 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="Fetch satellite images for Chinese facilities coordinates")
-    parser.add_argument("--csv", default="coordinates/Chinese facilities.csv", help="Path to the CSV file")
-    parser.add_argument("--output", default="../IMINT-Images/double_fencing_images", help="Output directory for images")
+    parser.add_argument("--csv", default="coordinates/non_double_fences_ch_coords.csv", help="Path to the CSV file")
+    parser.add_argument("--output", default="../IMINT-Images/Non_double_fences_all", help="Output directory for images")
     parser.add_argument("--distance", type=float, default=0.5, help="Ground distance in km for image width/height")
     parser.add_argument("--size", type=int, default=640, help="Image size in pixels (square)")
     parser.add_argument("--maptype", default="satellite", choices=["roadmap", "satellite", "hybrid", "terrain"], help="Map type")
