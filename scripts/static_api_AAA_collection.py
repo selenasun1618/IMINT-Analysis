@@ -70,6 +70,12 @@ def dms_to_decimal(dms_string):
     
     return decimal
 
+def _sanitize_name(name: str) -> str:
+    """Sanitize a name for safe filename usage (no path separators or odd chars)."""
+    name = str(name)
+    name = name.replace('/', '_').replace('\\', '_')
+    return __import__('re').sub(r"[^A-Za-z0-9._+-]+", "_", name).strip("._")
+
 def parse_csv_coordinates(csv_file_path):
     """Parses a CSV file and returns a list of coordinate dicts with name, lat, lon.
     Only includes rows where Y/N column is 'Y' and IMDATE Visible is empty."""
@@ -217,7 +223,10 @@ def save_static_map_image(lat, lon, name, api_key, out_dir, ground_distance_km=1
             print(f"No imagery at ({lat}, {lon}) — skipping.")
             return False  # indicates no image saved
 
-        filename = f"{name.replace(' ', '_')}_{lat:.5f}_{lon:.5f}_{ground_distance_km}km.png"
+        # Ensure output directory exists and filename is safe
+        os.makedirs(out_dir, exist_ok=True)
+        safe_name = _sanitize_name(name)
+        filename = f"{safe_name}_{lat:.5f}_{lon:.5f}_{ground_distance_km}km.png"
         filepath = os.path.join(out_dir, filename)
         with open(filepath, 'wb') as f:
             f.write(response.content)

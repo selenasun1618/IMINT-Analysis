@@ -5,10 +5,10 @@ from dotenv import load_dotenv
 from typing import List, Dict, Optional
 
 # Reuse URL construction and download logic from the existing script
-from scripts.static_api_AAA_collection import (
+from static_api_AAA_collection import (
     dms_to_decimal,
     save_static_map_image,
-)
+)   
 
 
 def read_csv_robust(csv_path: str) -> pd.DataFrame:
