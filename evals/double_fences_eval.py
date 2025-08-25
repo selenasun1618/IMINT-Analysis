@@ -1,16 +1,16 @@
 import os
 import json
-from datetime import datetime
-from pathlib import Path
 from openai import OpenAI
-client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+
+client = OpenAI(api_key="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")
 
 def create_jsonl_file(jsonl_path):
     """Create a JSONL file with the image and AAA presence."""
     github_url = "https://github.com/selenasun1618/IMINT-Images/blob/main/"
     local_dir = "../IMINT-Images/"
-    double_fences_local_folder = "double_fences_eval_images/"
-    Non_double_fences_local_folder = "Non_double_fences_eval_images/"
+    # Match actual repo directories
+    double_fences_local_folder = "double_fences_eval/"
+    Non_double_fences_local_folder = "Non_double_fences_eval/"
 
     total_written = 0
 
@@ -55,27 +55,27 @@ def upload_files(jsonl_path):
 
 def create_eval():
     eval_obj = client.evals.create(
-        name="AAA Eval",
+        name="Double Fences Eval",
         data_source_config={
             "type": "custom",
             "item_schema": {
                 "type": "object",
                 "properties": {
-                    "aaa_present": {"type": "string"},
+                    "double_fences_present": {"type": "string"},
                     "image_name": {"type": "string"},
                     "image_url": {"type": "image_url"},
                 },
-                "required": ["image_url", "aaa_present", "image_name"],
+                "required": ["image_url", "double_fences_present", "image_name"],
             },
             "include_sample_schema": True
         },
         testing_criteria=[
             {
-                "name": "AAA classification grader",
+                "name": "Double Fences classification grader",
                 "type": "string_check",
                 "input": "{{ sample.output_text.strip().lower() }}",
                 "operation": "eq",
-                "reference": "{{ item.aaa_present }}"
+                "reference": "{{ item.double_fences_present }}"
             }
         ],
     )
@@ -100,7 +100,7 @@ def run_eval(eval_id, file_id, model="gpt-4o-2024-08-06"):
 
     eval_run = client.evals.runs.create(
         eval_id=eval_id,
-        name="AAA Eval Run",
+        name="Double Fences Eval Run",
         data_source={
             "type": "completions",
             "model": model,
@@ -108,7 +108,7 @@ def run_eval(eval_id, file_id, model="gpt-4o-2024-08-06"):
             "response_format": {
                 "type": "json_schema",
                 "json_schema": {
-                    "name": "aaa_presence",
+                    "name": "double_fences_presence",
                     "schema": {
                         "type": "string",
                         "enum": ["yes", "no"]
@@ -138,28 +138,31 @@ def run_eval(eval_id, file_id, model="gpt-4o-2024-08-06"):
 def main():
 
     # 1. Create JSONL file
-    jsonl_path = Path(f"evals/double_fences_eval.jsonl").resolve()
-    print(f"Creating JSONL file at: {jsonl_path}")
-    create_jsonl_file(jsonl_path)
+    # jsonl_path = Path(f"evals/double_fences_eval.jsonl").resolve()
+    # print(f"Creating JSONL file at: {jsonl_path}")
+    # create_jsonl_file(jsonl_path)
+    # file = upload_files(jsonl_path=jsonl_path)
+    # print(f"Jsonl file uploaded: {file.id}")
 
-    # 2. Upload the JSONL file to OpenAI
-    jsonl_path = Path(f"evals/double_fences_eval.jsonl").resolve()
-    file = upload_files(jsonl_path=jsonl_path)
-    print(f"Jsonl file uploaded: {file.id}")
+    # # 2. Create the eval
+    # eval_obj = create_eval()
+    # print(f"Eval created: {eval_obj.id}")
 
-    # 3. Create the eval
-    eval_obj = create_eval()
-    print(f"Eval created: {eval_obj.id}")
-    # eval_obj_id = # TODO
+    """
+    Jsonl file uploaded: file-2VXn28hrFuKEESMUFdcMry
+    Eval created: eval_68a8460d1db8819188c5d04b2195c3ca
+    """
 
-    # 4. Run the eval
-    # model = "ft:gpt-4o-2024-08-06:vannevar-labs::Buk6Uyac"
-    # model = "gpt-4o-2024-08-06"
-    # eval_run = run_eval(eval_id=eval_obj_id, file_id=file.id, model=model)
-    # print(f"Eval run started: {eval_run.id}")
+    # 3. Run the eval
+    file_id = "file-2VXn28hrFuKEESMUFdcMry"
+    eval_obj_id = "eval_68a8460d1db8819188c5d04b2195c3ca"
+    # model = "ft:gpt-4o-2024-08-06:vannevar-labs::Buk6Uyac" # AAA finetuned
+    model = "gpt-4o-2024-08-06"
+    eval_run = run_eval(eval_id=eval_obj_id, file_id=file_id, model=model)
+    print(f"Eval run started: {eval_run.id}")
 
-    # run = client.evals.runs.retrieve(eval_id=eval_obj_id, run_id=eval_run.id)
-    # print(f"Eval run status: {run.status}")
+    run = client.evals.runs.retrieve(eval_id=eval_obj_id, run_id=eval_run.id)
+    print(f"Eval run status: {run.status}")
 
 if __name__ == "__main__":
     main()

@@ -5,6 +5,7 @@ import json
 from typing import Iterator, Tuple
 from dotenv import load_dotenv
 from openai import OpenAI
+from datetime import datetime
 
 from static_api_AAA_collection import (
     save_static_map_image,
@@ -119,6 +120,7 @@ def main():
     parser.add_argument("--name_prefix", default="AAA", help="Filename prefix for saved images")
     parser.add_argument("--model", default="ft:gpt-4o-2024-08-06:vannevar-labs::Buk6Uyac", help="OpenAI model (use your fine-tuned model id if available)")
     parser.add_argument("--sleep", type=float, default=0.2, help="Sleep seconds between classifications to avoid rate limits")
+    parser.add_argument("--resume", action="store_true", help="Resume from last progress if available in output folder")
 
     args = parser.parse_args()
 
@@ -135,14 +137,38 @@ def main():
 
     client = OpenAI(api_key=openai_key)
 
-    # Build structured output subfolder: <output>/<lat>_<lon>_R<radius>km_T<tile>km_<model>
+    # Compute centers first so we can include total count in folder name
+    centers = list(generate_tile_centers(args.lat, args.lon, args.radius_km, args.tile_km))
+    total = len(centers)
+
+    # Build output subfolder in the requested format:
+    # AAA_found_{lat}_{lon}_R{radius km}_T{tile km}_{model}_{num-total-images}_{date}
+    # Example: AAA_found_39.064618_125.956587_R5.0km_T1.0km_ft_gpt-4o-2024-08-06_56-total-images_Aug-22-2025
+    coords = f"{args.lat:.6f}_{args.lon:.6f}"
+    radius_str = f"{args.radius_km:.1f}km"
+    tile_str = f"{args.tile_km:.1f}km"
+    date_str = datetime.now().strftime("%b-%d-%Y")
     model_tag = _sanitize_tag(args.model)
-    subfolder = f"{args.lat:.5f}_{args.lon:.5f}_R{args.radius_km}km_T{args.tile_km}km_{model_tag}"
+    subfolder = f"AAA_found_{coords}_R{radius_str}_T{tile_str}_{model_tag}_{total}-total-images_{date_str}"
     out_dir = os.path.join(args.output, subfolder)
     os.makedirs(out_dir, exist_ok=True)
 
-    centers = list(generate_tile_centers(args.lat, args.lon, args.radius_km, args.tile_km))
-    total = len(centers)
+    # Progress tracking for resumable runs
+    progress_path = os.path.join(out_dir, "progress.json")
+    start_index = 1
+    if args.resume and os.path.isfile(progress_path):
+        try:
+            with open(progress_path, "r") as pf:
+                prog = json.load(pf)
+                last_processed = int(prog.get("last_processed", 0))
+                # Ensure within bounds
+                if 1 <= last_processed < total:
+                    start_index = last_processed + 1
+        except Exception as e:
+            print(f"Warning: could not read progress file '{progress_path}': {e}. Starting from 1.")
+
+    if args.resume:
+        print(f"Resume mode: starting from index {start_index} of {total}")
 
     print("Configuration:")
     print(f"  Center: ({args.lat}, {args.lon})")
@@ -154,6 +180,9 @@ def main():
 
     saved = 0
     for idx, (tlat, tlon) in enumerate(centers, 1):
+        # Skip already processed indices when resuming
+        if idx < start_index:
+            continue
         # Build URL first for classification
         url = build_gmaps_static_url(
             tlat,
@@ -187,9 +216,20 @@ def main():
             )
             if ok:
                 saved += 1
+        # Update progress after handling this tile (regardless of label)
+        try:
+            with open(progress_path, "w") as pf:
+                json.dump({
+                    "last_processed": idx,
+                    "saved_in_this_run": saved,
+                    "total": total,
+                    "timestamp": datetime.now().isoformat()
+                }, pf)
+        except Exception as e:
+            print(f"Warning: could not write progress file '{progress_path}': {e}")
         time.sleep(max(0.0, args.sleep))
 
-    print(f"\n✅ Finished. {saved} images saved (predicted 'yes') out of {total} evaluated tiles.")
+    print(f"\nFinished. {saved} images saved (predicted 'yes') out of {total} evaluated tiles.")
 
 
 if __name__ == "__main__":
