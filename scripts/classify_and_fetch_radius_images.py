@@ -120,7 +120,6 @@ def main():
     parser.add_argument("--name_prefix", default="AAA", help="Filename prefix for saved images")
     parser.add_argument("--model", default="ft:gpt-4o-2024-08-06:vannevar-labs::Buk6Uyac", help="OpenAI model (use your fine-tuned model id if available)")
     parser.add_argument("--sleep", type=float, default=0.2, help="Sleep seconds between classifications to avoid rate limits")
-    parser.add_argument("--resume", action="store_true", help="Resume from last progress if available in output folder")
 
     args = parser.parse_args()
 
@@ -156,7 +155,7 @@ def main():
     # Progress tracking for resumable runs
     progress_path = os.path.join(out_dir, "progress.json")
     start_index = 1
-    if args.resume and os.path.isfile(progress_path):
+    if os.path.isfile(progress_path):
         try:
             with open(progress_path, "r") as pf:
                 prog = json.load(pf)
@@ -167,8 +166,7 @@ def main():
         except Exception as e:
             print(f"Warning: could not read progress file '{progress_path}': {e}. Starting from 1.")
 
-    if args.resume:
-        print(f"Resume mode: starting from index {start_index} of {total}")
+    print(f"Resume mode: starting from index {start_index} of {total}")
 
     print("Configuration:")
     print(f"  Center: ({args.lat}, {args.lon})")
