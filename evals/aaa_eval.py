@@ -10,8 +10,8 @@ def create_jsonl_file(jsonl_path):
     """Create a JSONL file with the image and AAA presence."""
     github_url = "https://github.com/selenasun1618/IMINT-Images/blob/main/AAA/"
     local_dir = "../IMINT-Images/AAA/"
-    AAA_local_folder = "aaa_val/"
-    Non_AAA_local_folder = "no_aaa_val/"
+    AAA_local_folder = "aaa_test/"
+    Non_AAA_local_folder = "non_aaa_test/"
 
     total_written = 0
 
@@ -132,29 +132,36 @@ def run_eval(eval_id, file_id, user_prompt=ZERO_SHOT_PROMPT, model="gpt-4o-2024-
 def main():
 
     # 1. Create JSONL file
-    # timestamp = datetime.now().strftime("%m%d_%H%M")
-    # jsonl_path = Path(f"evals/aaa_eval_{timestamp}.jsonl").resolve()
-    # print(f"Creating JSONL file at: {jsonl_path}")
-    # create_jsonl_file(jsonl_path)
-
-    # 2. Upload the JSONL file to OpenAI
-    jsonl_path = Path("evals/aaa_eval.jsonl").resolve()
+    jsonl_path = Path(f"evals/aaa_eval_test.jsonl").resolve()
+    print(f"Creating JSONL file at: {jsonl_path}")
+    create_jsonl_file(jsonl_path)
     file = upload_files(jsonl_path=jsonl_path)
     print(f"Jsonl file uploaded: {file.id}")
 
     # 3. Create the eval
-    # eval_obj = create_eval()
-    # print(f"Eval created: {eval_obj.id}")
-    eval_obj_id = "eval_68750ce75e208191b4a2623a46b8809a"
+    eval_obj = create_eval()
+    print(f"Eval created: {eval_obj.id}")
+
+    """
+    Validation:
+    Jsonl file uploaded: file-3QWWDHt7bQ5AJxLZ6vZZCa
+    Eval created: eval_68b407abf6d08191bc0a0e79fe975389
+
+    Test:
+    Jsonl file uploaded: file-X4tkn9ycbZBASGJc2fHokF
+    Eval created: eval_68b408808b9c8191b2f70d59b545f719
+    """
+
+    eval_obj_id = "eval_68b407abf6d08191bc0a0e79fe975389"
 
     # 4. Run the eval
-    model = "ft:gpt-4o-2024-08-06:vannevar-labs::Buk6Uyac"
-    # model = "gpt-4o-2024-08-06"
-    eval_run = run_eval(eval_id=eval_obj_id, file_id=file.id, user_prompt=FEW_SHOT_PROMPT, model=model)
-    print(f"Eval run started: {eval_run.id}")
+    # model = "ft:gpt-4o-2024-08-06:vannevar-labs::Buk6Uyac"
+    # # model = "gpt-4o-2024-08-06"
+    # eval_run = run_eval(eval_id=eval_obj_id, file_id=file.id, user_prompt=FEW_SHOT_PROMPT, model=model)
+    # print(f"Eval run started: {eval_run.id}")
 
-    run = client.evals.runs.retrieve(eval_id=eval_obj_id, run_id=eval_run.id)
-    print(f"Eval run status: {run.status}")
+    # run = client.evals.runs.retrieve(eval_id=eval_obj_id, run_id=eval_run.id)
+    # print(f"Eval run status: {run.status}")
 
 if __name__ == "__main__":
     main()

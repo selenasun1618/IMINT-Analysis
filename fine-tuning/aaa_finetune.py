@@ -79,11 +79,11 @@ curl https://api.openai.com/v1/files \
 response:
 {
   "object": "file",
-  "id": "file-1dAqTBkbvxk4gF2agVEdBi",
+  "id": "file-RkdZKcELZTCMw1iBQ9wY2u",
   "purpose": "fine-tune",
   "filename": "aaa_training.jsonl",
-  "bytes": 493774,
-  "created_at": 1752857193,
+  "bytes": 415105,
+  "created_at": 1756629256,
   "expires_at": null,
   "status": "processed",
   "status_details": null
@@ -95,23 +95,23 @@ curl https://api.openai.com/v1/fine_tuning/jobs \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $OPENAI_API_KEY" \
   -d '{
-    "training_file": "file-1dAqTBkbvxk4gF2agVEdBi",
+    "training_file": "file-RkdZKcELZTCMw1iBQ9wY2u",
     "model": "gpt-4o-2024-08-06"
     }'
 
 response:
 {
   "object": "fine_tuning.job",
-  "id": "ftjob-UvdkidlXiQrLeqDxMDm2JwbS",
+  "id": "ftjob-qEW6vLYjhTNVv1lwylwETBuF",
   "model": "gpt-4o-2024-08-06",
-  "created_at": 1752857260,
+  "created_at": 1756629281,
   "finished_at": null,
   "fine_tuned_model": null,
   "organization_id": "org-Siu2CQQYJYdlsuMSyrbni0Es",
   "result_files": [],
   "status": "validating_files",
   "validation_file": null,
-  "training_file": "file-1dAqTBkbvxk4gF2agVEdBi",
+  "training_file": "file-RkdZKcELZTCMw1iBQ9wY2u",
   "hyperparameters": {
     "n_epochs": "auto",
     "batch_size": "auto",
@@ -120,7 +120,7 @@ response:
   "trained_tokens": null,
   "error": {},
   "user_provided_suffix": null,
-  "seed": 1897007299,
+  "seed": 1452068772,
   "estimated_finish": null,
   "integrations": [],
   "metadata": null,
