@@ -1,16 +1,18 @@
 import os
 import json
 from openai import OpenAI
+from df_prompts import *
+from pathlib import Path
 
 client = OpenAI(api_key="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")
 
 def create_jsonl_file(jsonl_path):
     """Create a JSONL file with the image and AAA presence."""
-    github_url = "https://github.com/selenasun1618/IMINT-Images/blob/main/"
-    local_dir = "../IMINT-Images/"
+    github_url = "https://github.com/selenasun1618/IMINT-Images/blob/main/Double-Fences/"
+    local_dir = "../IMINT-Images/Double-Fences/"
     # Match actual repo directories
-    double_fences_local_folder = "double_fences_eval/"
-    Non_double_fences_local_folder = "Non_double_fences_eval/"
+    double_fences_local_folder = "df_val/"
+    Non_double_fences_local_folder = "no_df_val/"
 
     total_written = 0
 
@@ -82,21 +84,14 @@ def create_eval():
     return eval_obj
 
 
-def run_eval(eval_id, file_id, model="gpt-4o-2024-08-06"):
+def run_eval(eval_id, file_id, user_prompt=ZERO_SHOT_PROMPT, model="gpt-4o-2024-08-06"):
     """Run the eval with the given ID and file path."""
 
     developer_prompt = """
-    You are an expert nuclear analyst responsible for informing the U.S. government about the status of nuclear power plants.
+    You are an expert satellite analyst responsible for informing the U.S. government about the status of nuclear power plants.
     You are looking for double fences around buildings, which is an indicator that it's a nuclear site.
     You are to decide whether the given image contains double fences or not.
     """
-
-    user_prompt = """
-    Would you guess this iamge contains double fences?
-    If yes, answer "yes". If no, answer "no". ONLY stick to "yes" or "no" as your answer. Here is the image:
-    {{ item.image_url }}
-    """
-    # TODO - strutured output?
 
     eval_run = client.evals.runs.create(
         eval_id=eval_id,
@@ -138,31 +133,32 @@ def run_eval(eval_id, file_id, model="gpt-4o-2024-08-06"):
 def main():
 
     # 1. Create JSONL file
-    # jsonl_path = Path(f"evals/double_fences_eval.jsonl").resolve()
-    # print(f"Creating JSONL file at: {jsonl_path}")
-    # create_jsonl_file(jsonl_path)
-    # file = upload_files(jsonl_path=jsonl_path)
-    # print(f"Jsonl file uploaded: {file.id}")
+    jsonl_path = Path(f"evals/double_fences_eval.jsonl").resolve()
+    print(f"Creating JSONL file at: {jsonl_path}")
+    create_jsonl_file(jsonl_path)
+    file = upload_files(jsonl_path=jsonl_path)
+    print(f"Jsonl file uploaded: {file.id}")
 
-    # # 2. Create the eval
-    # eval_obj = create_eval()
-    # print(f"Eval created: {eval_obj.id}")
+    # 2. Create the eval
+    eval_obj = create_eval()
+    print(f"Eval created: {eval_obj.id}")
 
     """
-    Jsonl file uploaded: file-2VXn28hrFuKEESMUFdcMry
-    Eval created: eval_68a8460d1db8819188c5d04b2195c3ca
+    For val set:
+    Jsonl file uploaded: file-5fu5Hd5fJszW4W1eHnAdDg
+    Eval created: eval_68b3fd61739c8191863ff3a05434d02e
     """
 
     # 3. Run the eval
-    file_id = "file-2VXn28hrFuKEESMUFdcMry"
-    eval_obj_id = "eval_68a8460d1db8819188c5d04b2195c3ca"
-    # model = "ft:gpt-4o-2024-08-06:vannevar-labs::Buk6Uyac" # AAA finetuned
-    model = "gpt-4o-2024-08-06"
-    eval_run = run_eval(eval_id=eval_obj_id, file_id=file_id, model=model)
-    print(f"Eval run started: {eval_run.id}")
+    # file_id = "file-5fu5Hd5fJszW4W1eHnAdDg"
+    # eval_obj_id = "eval_68b3fd61739c8191863ff3a05434d02e"
+    # # model = "ft:gpt-4o-2024-08-06:vannevar-labs::Buk6Uyac" # double fences finetuned
+    # model = "gpt-4o-2024-08-06"
+    # eval_run = run_eval(eval_id=eval_obj_id, file_id=file_id, user_prompt=ZERO_SHOT_PROMPT, model=model)
+    # print(f"Eval run started: {eval_run.id}")
 
-    run = client.evals.runs.retrieve(eval_id=eval_obj_id, run_id=eval_run.id)
-    print(f"Eval run status: {run.status}")
+    # run = client.evals.runs.retrieve(eval_id=eval_obj_id, run_id=eval_run.id)
+    # print(f"Eval run status: {run.status}")
 
 if __name__ == "__main__":
     main()

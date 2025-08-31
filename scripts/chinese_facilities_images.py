@@ -49,11 +49,18 @@ def parse_coord_value(val: object) -> Optional[float]:
         return None
     s = str(val).strip().replace("�", "°")
 
-    # Try direct float
+    # Try direct float first
     try:
         return float(s)
     except ValueError:
         pass
+
+    # Try removing degree symbol and parsing as float (e.g., "21.669727°" -> 21.669727)
+    if "°" in s:
+        try:
+            return float(s.replace("°", ""))
+        except ValueError:
+            pass
 
     # Try DD with hemisphere, e.g., 12.345°N
     m = re.fullmatch(r"\s*([+-]?[0-9]*\.?[0-9]+)°?\s*([NnSsEeWw])\s*", s)
@@ -77,8 +84,13 @@ def extract_coordinates(df: pd.DataFrame) -> List[Dict[str, object]]:
     Looks for common latitude/longitude column names or combined fields.
     Returns list of {name, lat, lon} dicts for rows with valid coords.
     """
+    # Debug: print available columns
+    print(f"Available columns: {list(df.columns)}")
+    
     # Candidate columns for latitude and longitude
     lat_candidates = [
+        "Entrance Latitude",
+        "Entrance Latitute",  # Handle typo in CSV
         "Latitude",
         "Lat",
         "LAT",
@@ -87,6 +99,7 @@ def extract_coordinates(df: pd.DataFrame) -> List[Dict[str, object]]:
         "Northing",
     ]
     lon_candidates = [
+        "Entrance Longitude",
         "Longitude",
         "Lon",
         "LON",
@@ -115,6 +128,10 @@ def extract_coordinates(df: pd.DataFrame) -> List[Dict[str, object]]:
     lat_col = first_present(lat_candidates)
     lon_col = first_present(lon_candidates)
     comb_col = first_present(combined_candidates)
+    
+    print(f"Found lat column: {lat_col}")
+    print(f"Found lon column: {lon_col}")
+    print(f"Found combined column: {comb_col}")
 
     coords: List[Dict[str, object]] = []
     for idx, row in df.iterrows():
@@ -124,8 +141,12 @@ def extract_coordinates(df: pd.DataFrame) -> List[Dict[str, object]]:
         lon: Optional[float] = None
 
         if lat_col and lon_col:
-            lat = parse_coord_value(row.get(lat_col))
-            lon = parse_coord_value(row.get(lon_col))
+            lat_val = row.get(lat_col)
+            lon_val = row.get(lon_col)
+            print(f"Row {idx}: {name} - lat_val='{lat_val}', lon_val='{lon_val}'")
+            lat = parse_coord_value(lat_val)
+            lon = parse_coord_value(lon_val)
+            print(f"  Parsed: lat={lat}, lon={lon}")
         elif comb_col:
             # Try to split combined like "39° 5'27.29\"N 125°37'2.83\"E" or "12.3N, 45.6E"
             val = row.get(comb_col)

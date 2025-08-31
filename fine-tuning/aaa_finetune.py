@@ -7,10 +7,10 @@ client = OpenAI(api_key="sk-proj-huEb3hWqBLsV43FqL4WV-uJpM9WTYjpEeM9D6X_G6WOxuIc
 
 def create_jsonl_file(jsonl_path):
     """Create a JSONL file with the image and AAA presence."""
-    github_url = "https://github.com/selenasun1618/IMINT-Images/blob/main/"
-    local_dir = "../IMINT-Images/"
-    AAA_local_folder = "AAA_training_images/"
-    Non_AAA_local_folder = "Non_AAA_training_images/"
+    github_url = "https://github.com/selenasun1618/IMINT-Images/blob/main/AAA/"
+    local_dir = "../IMINT-Images/AAA/"
+    AAA_local_folder = "aaa_train/"
+    Non_AAA_local_folder = "non_aaa_train/"
 
     total_written = 0
 

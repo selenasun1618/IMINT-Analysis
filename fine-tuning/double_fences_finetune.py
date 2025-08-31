@@ -6,11 +6,11 @@ client = OpenAI(api_key="sk-proj-huEb3hWqBLsV43FqL4WV-uJpM9WTYjpEeM9D6X_G6WOxuIc
 
 def create_jsonl_file(jsonl_path):
     """Create a JSONL file with the image and AAA presence."""
-    github_url = "https://github.com/selenasun1618/IMINT-Images/blob/main/"
-    local_dir = "../IMINT-Images/"
+    github_url = "https://github.com/selenasun1618/IMINT-Images/blob/main/Double-Fences/"
+    local_dir = "../IMINT-Images/Double-Fences/"
     # Match actual repo directories
-    double_fences_local_folder = "double_fences_training/"
-    Non_double_fences_local_folder = "Non_double_fences_training/"
+    double_fences_local_folder = "df_train/"
+    Non_double_fences_local_folder = "no_df_train/"
 
     total_written = 0
 
@@ -23,7 +23,7 @@ def create_jsonl_file(jsonl_path):
                     "messages": [
                         {
                             "role": "user",
-                            "content": "Classify whether the following satellite image contains any anti-aircraft artillery (AAA). Respond only with \"yes\" or \"no\"."
+                            "content": "Classify whether the following satellite image contains double fences. Respond only with \"yes\" or \"no\"."
                         },
                         {
                              "role": "user",
@@ -48,7 +48,7 @@ def create_jsonl_file(jsonl_path):
                     "messages": [
                         {
                             "role": "user",
-                            "content": "Classify whether the following satellite image contains any anti-aircraft artillery (AAA). Respond only with \"yes\" or \"no\"."
+                            "content": "Classify whether the following satellite image contains double fences. Respond only with \"yes\" or \"no\"."
                         },
                         {
                              "role": "user",
@@ -71,15 +71,21 @@ if __name__ == "__main__":
     finetune_data = "/Users/selenasun/Projects/IMINT-Analysis/fine-tuning/double_fences_training.jsonl"
     create_jsonl_file(finetune_data)
 
+"""
+curl https://api.openai.com/v1/files \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -F purpose="fine-tune" \
+  -F file="@./fine-tuning/double_fences_training.jsonl"
+"""
 
 """
 {
   "object": "file",
-  "id": "file-Ti7v8wCqkAw4u1n7CyFShA",
+  "id": "file-FpF73cgv6P5KHEn5jrY8MP",
   "purpose": "fine-tune",
   "filename": "double_fences_training.jsonl",
-  "bytes": 73768,
-  "created_at": 1755859301,
+  "bytes": 65520,
+  "created_at": 1756628655,
   "expires_at": null,
   "status": "processed",
   "status_details": null
@@ -91,7 +97,7 @@ curl https://api.openai.com/v1/fine_tuning/jobs \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer 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" \
   -d '{
-    "training_file": "file-Ti7v8wCqkAw4u1n7CyFShA",
+    "training_file": "file-FpF73cgv6P5KHEn5jrY8MP",
     "model": "gpt-4o-2024-08-06"
   }'
 """
@@ -99,16 +105,16 @@ curl https://api.openai.com/v1/fine_tuning/jobs \
 """
 {
   "object": "fine_tuning.job",
-  "id": "ftjob-VGrx5k0CDQwVvFXDxL1VrVCx",
+  "id": "ftjob-z6kW9cImlilXixrNBFOtbMWL",
   "model": "gpt-4o-2024-08-06",
-  "created_at": 1755859896,
+  "created_at": 1756628723,
   "finished_at": null,
   "fine_tuned_model": null,
   "organization_id": "org-Siu2CQQYJYdlsuMSyrbni0Es",
   "result_files": [],
   "status": "validating_files",
   "validation_file": null,
-  "training_file": "file-Ti7v8wCqkAw4u1n7CyFShA",
+  "training_file": "file-FpF73cgv6P5KHEn5jrY8MP",
   "hyperparameters": {
     "n_epochs": "auto",
     "batch_size": "auto",
@@ -117,7 +123,7 @@ curl https://api.openai.com/v1/fine_tuning/jobs \
   "trained_tokens": null,
   "error": {},
   "user_provided_suffix": null,
-  "seed": 43064642,
+  "seed": 1588808397,
   "estimated_finish": null,
   "integrations": [],
   "metadata": null,

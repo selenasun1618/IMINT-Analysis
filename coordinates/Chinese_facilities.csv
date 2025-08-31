@@ -1,0 +1,128 @@
+Name,Facility Latitude,Facility Longitude,Entrance Latitute,Entrance Longitude,Reasoning Trace,(Optional) Multi-step reasoning,Notes
+Fangchenggang-1/CPR1000,21.6672678°N,108.5630002°E,21.669727°,108.562646°,"conspicuous checkpoint where double fencing seen as two dark, straight, parallel lines breaks","Step 1: identify roads leading into and out of an industrial complex
+Step 2: trace the roads to the complex entrances/exits. Either there is a checkpoint/break in the double fencing at the entrance/exit, or the double fencing cuts across the road forming a gate. There may be a guardhouse next to the gate
+Step 3: trace the double fencing emanating from the entrances/exits to extend around the complex. The double fencing may appear as two or more lines, usually dark, that:
+3a: are in most cases, though not always, straight and parallel, turning rigid corners
+3b: enclose a band of a darker or lighter shade, which is the concrete ground in between the two fences
+3c: cast segmented shadows as a fence would",
+Fangchenggang-2/CPR1000,21.66652°N,108.5628608°E,21.668341°,108.565359°,triple fencing gate cutting across the entrance/exit road,,"these entrances/exits don't necessarily correspond to Fangchenggang unit 1/2. The two units share the same perimeter, so I just gave you two entrances/exits. There are others. Same for all commercial NPPs in this spreadsheet"
+Changjiang-1/CNP600,19.4606174°N,108.8998891°E,19.462584°,108.899808°,"conspicuous checkpoint where double fencing seen as two dark, straight, parallel lines casting segmented shadows breaks",,
+Changjiang-2/CNP600,19.4599194°N,108.9002753°E,19.461979°,108.898425°,double fencing gate seen by segmented shadows cutting across the entrance/exit road,,
+Daya Bay-1/M310,22.5981268°N,114.5436798°E,22.598430°,114.542217°,double fencing gate seen as two dark lines cutting across the entrance/exit road,,
+Daya Bay-2/M310,22.5982472°N,114.5428321°E,22.598395°,114.544336°,double fencing gate seen as two dark lines casting segmented shadows cutting across the entrance/exit road,,
+Ling'ao-1/M310,22.6057015°N,114.5516456°E,22.601837°,114.550389°,checkpoint where double fencing seen by the enlosed dark gray band originates,,
+Ling'ao-2/M310,22.6051369°N,114.5510341°E,22.603549°,114.548735°,double fencing gate seen as two dark lines cutting across the entrance/exit road,,
+Ling'ao-3/CPR1000,22.6090826°N,114.5543944°E,22.604893°,114.550064°,"double fencing gate seen as two dark lines cutting across the entrance/exit road, casting segmented shadows",,
+Ling'ao-4/CPR1000,22.6085056°N,114.5537873°E,22.606392°,114.551698°,"double fencing gate seen as two dark lines cutting across the entrance/exit road, casting segmented shadows",,
+Qinshan I/CNP300,30.4404719°N,120.9499531°E,30.441521°,120.949063°,guardhouse equipped with double fencing gate cutting across the entrance/exit road then extending into a double fence perimeter casting segmented shadows around the complex,,
+Qinshan II-1/CNP600,30.4212579°N,120.9441917°E,30.420551°,120.940231°,"conspicuous checkpoint where double fencing seen as two dark, straight, parallel lines casting segmented shadows breaks",,
+Qinshan II-2/CNP600,30.4219055°N,120.9435909°E,30.422130°,120.941676°,"conspicuous checkpoint where double fencing seen as two dark, straight, parallel lines casting segmented shadows breaks",,
+Qinshan II-3/CNP600,30.4190375°N,120.940737°E,30.421041°,120.940880°,"double fencing gate seen as two dark lines cutting across the entrance/exit road, casting segmented shadows",,
+Qinshan II-4/CNP600,30.4196666°N,120.9401684°E,30.420205°,120.945681°,"double fencing gate seen as two dark lines cutting across the entrance/exit road, casting segmented shadows",,
+Qinshan III-1/CANDU,30.4363923°N,120.9589271°E,30.437680°,120.956633°,"conspicuous checkpoint where double fencing seen as two dark, straight, parallel lines casting segmented shadows breaks",,
+Qinshan III-2/CANDU,30.4366883°N,120.9574358°E,30.434849°,120.955711°,triple fencing gate seen as three dark lines cutting across the entrance/exit road,,
+Fuqing-1/CPR1000,25.4368202°N,119.4369399°E,25.437535°,119.438980°,"checkpoint where double fencing seen as two dark, straight, parallel lines turning rigid corners breaks, then extends around the complex",,
+Fuqing-2/CPR1000,25.4373628°N,119.4376158°E,25.439901°,119.437509°,"break in double fencing seen as two dark, straight, parallel lines turning rigid corners",,
+Fuqing-3/CPR1000,25.4399118°N,119.4408266°E,25.438436°,119.440817°,"checkpoint where double fencing seen as two dark, straight, parallel lines turning rigid corners breaks, then continues to extend around the complex",,
+Fuqing-4/CPR1000,25.440435°N,119.4415025°E,25.442486°,119.440823°,triple fencing gate seen as three dark lines cutting across the entrance/exit road,,
+Fuqing-5/HPR1000,25.4419076°N,119.443423°E,25.442138°,119.444972°,"checkpoint where double fencing seen as two dark, straight, parallel lines turning rigid corners breaks, then continues to extend around the complex",,
+Fuqing-6/HPR1000,25.4432252°N,119.4451182°E,25.445597°,119.444494°,"break in triple fencing seen as dark, straight, parallel lines turning rigid corners",,
+Xiapu-1/CFR600,26.803502°N,120.1546701°E,26.803516°,120.152657°,"checkpoint where double fencing seen as two dark, straight, parallel lines turning rigid corners breaks, then continues to extend around the complex",,
+Xiapu-2/CFR600,26.8025444°N,120.1516446°E,,,,,shared perimeter
+Fangjiashan-1/CPR1000,30.4415056°N,120.9423413°E,30.441728°,120.943624°,"guardhouse from which double fencing seen as two dark, straight, parallel lines enclosing a gray band emanates, double fencing gate seen as two dark lines across the entrance/exit road",,
+Fangjiashan-2/CPR1000,30.4418571°N,120.941483°E,30.443232°,120.939781°,double fencing gate seen as two dark lines cutting across the entrance/exit road,,
+Haiyang-1/AP1000,36.7080774°N,121.3761397°E,36.710897°,121.379924°,"conspicuous checkpoint where double fencing seen as two bright, straight, parallel lines turning rigid corners breaks",,
+Haiyang-2/AP1000,36.7083182°N,121.3784572°E,36.705932°,121.378217°,"guardhouse from which double fencing seen by segmented shadows emanates, double fencing gate seen as two dark lines across the entrance/exit road",,
+Haiyang-3/CAP1000,36.7085935°N,121.3817402°E,,,,,under construction
+Haiyang-4/CAP1000,36.7088515°N,121.3841434°E,,,,,under construction
+Sanmen-1/AP1000,29.1029491°N,121.6367511°E,29.103828°,121.635462°,"conspicuous checkpoint where double fencing seen as dark, straight, parallel lines casting segmented shadows and enclosing a gray band emanates and continues to extend around the complex",,
+Sanmen-2/AP1000,29.1024461°N,121.6387628°E,29.101058°,121.637015°,"double fencing gate seen as two dark lines cutting across the entrance/exit road, casting segmented shadows",,
+Sanmen-3/CAP1000,29.1018152°N,121.6413278°E,,,,,under construction
+Sanmen-4/CAP1000,29.1012949°N,121.6433824°E,,,,,under construction
+Hongyanhe-1/CPR1000,39.7967068°N,121.4733938°E,39.793640°,121.476410°,"conspicuous checkpoint where double fencing seen as two straight, parallel lines breaks, then continues to extend around the complex",,
+Hongyanhe-2/CPR1000,39.7967232°N,121.4744667°E,39.799689°,121.472548°,double fencing gate seen as two dark lines cutting across the entrance/exit road,,
+Hongyanhe-3/CPR1000,39.7967232°N,121.4774278°E,39.799706°,121.479679°,triple fencing gate seen as three dark lines cutting across the entrance/exit road,,
+Hongyanhe-4/CPR1000,39.7967068°N,121.4783934°E,39.793498°,121.481756°,"conspicuous checkpoint where double fencing seen as two straight, parallel lines breaks, then continues to extend around the complex",,
+Hongyanhe-5/ACPR1000,39.7955857°N,121.4823202°E,,,,,shared perimeter
+Hongyanhe-6/ACPR1000,39.7955939°N,121.4833716°E,,,,,shared perimeter
+Ningde-1/CPR1000,27.0467554°N,120.2888796°E,27.048377°,120.286783°,"conspicuous checkpoint where double fencing seen as dark, straight, parallel lines enclosing a dark gray band emanates and continues to extend around the complex",,
+Ningde-2/CPR1000,27.0463923°N,120.2880857°E,27.044823°,120.283253°,double fencing gate seen as two dark lines cutting across the entrance/exit road,,
+Ningde-3/CPR1000,27.0451023°N,120.2854464°E,,,,,shared perimeter
+Ningde-4/CPR1000,27.0447296°N,120.2846524°E,,,,,shared perimeter
+Shidao Bay/HTR-PM,36.979256°N,122.5305752°E,36.979965°,122.532421°,"checkpoint where double fencing seen as two dark, straight, parallel lines turning rigid corners and enclosing a brightly shaded band breaks, then continues to extend around the complex",,
+Shidao Bay/CAP1400,36.9653681°N,122.5173788°E,36.963559°,122.517251°,"checkpoint where double fencing seen as two dark, straight, parallel lines turning rigid corners and enclosing a brightly shaded band breaks, then continues to extend around the complex",,
+Shidao Bay/CAP1400,36.9674426°N,122.5191383°E,36.966074°,122.521849°,"break in double fencing seen as two dark, straight, parallel lines turning rigid corners",,
+Tianwan-1/VVER1000,34.6870333°N,119.4608481°E,34.685657°,119.458561°,"checkpoint where double fencing seen as two dark, straight, parallel lines casting segmented shadows and enclosing a gray band breaks, then continues to extend around the complex",,
+Tianwan-2/VVER1000,34.6879508°N,119.4590993°E,34.687433°,119.462933°,"gate seen as two dark lines cutting across the entrance/exit road, extending in both directions to cast segmented shadows",,
+Tianwan-3/VVER1000,34.68893°N,119.4572432°E,34.687635°,119.454939°,"checkpoint where double fencing seen as two dark, straight, parallel lines casting segmented shadows breaks, then continues to extend around the complex",,
+Tianwan-4/VVER1000,34.6898496°N,119.4555259°E,34.691604°,119.455572°,"gate seen as three dark lines cutting across the entrance/exit road, extending in both directions to cast segmented shadows",,
+Tianwan-5/ACPR1000,34.6913758°N,119.4526935°E,34.688962°,119.450130°,"checkpoint where double fencing seen as two dark, straight, parallel lines turning rigid corners breaks, then continues to extend around the complex",,
+Tianwan-6/ACPR1000,34.6917723°N,119.4519059°E,34.693271°,119.450702°,"gate seen as three dark lines cutting across the entrance/exit road, extending in both directions to cast segmented shadows",,
+Taishan-1/EPR,21.9191951°N,112.9825425°E,21.919387°,112.986314°,"conspicuous checkpoint where double fencing seen as two dark, straight, parallel lines breaks",,
+Taishan-2/EPR,21.9179908°N,112.9806435°E,,,,,shared perimeter
+Yangjiang-1/CPR1000,21.7080962°N,112.2593871°E,21.711147°,112.261693°,"guardhouse, triple fencing gate seen as two dark lines across the entrance/exit",,
+Yangjiang-2/CPR1000,21.7076875°N,112.2587756°E,21.709410°,112.260190°,"double fencing gate seen as two dark, straight, parallel lines cutting across the entrance/exit road",,
+Yangjiang-3/CPR1000,21.7104287°N,112.2616402°E,21.707367°,112.257919°,"double fencing gate seen as two dark, straight, parallel lines cutting across the entrance/exit road",,
+Yangjiang-4/CPR1000,21.7097309°N,112.2610394°E,21.704952°,112.257740°,"conspicuous checkpoint where double fencing seen as two dark, straight, parallel lines breaks",,
+Yangjiang-5/ACPR1000,21.7123425°N,112.2636572°E,21.704717°,112.260141°,"conspicuous checkpoint where double fencing seen as two dark, straight, parallel lines breaks",,
+Yangjiang-6/ACPR1000,21.7117145°N,112.2630993°E,21.707391°,112.262896°,"conspicuous checkpoint where double fencing seen as two dark, straight, parallel lines breaks",,
+China Experimental Fast Reactor (CEFR),39.7404333°N,116.0308262°E,39.739689°,116.032016°,"guardhouse from which double fencing seen by segmented shadows emanates, double fencing gate seen as two dark lines across the entrance/exit",,
+SPR IAE/49-2 reactor,39.740953°N,116.0354825°E,39.740926°,116.035865°,"guardhouse from which double fencing seen by segmented shadows emanates, break in double fencing at the guardhouse, light-shade band",,
+China Advanced Research Reactor (CARR),39.7434032°N,116.0352894°E,39.743438°,116.035919°,"guardhouse from which double fencing seen by segmented shadows emanates, double fencing gate seen as two dark lines over the entrance/exit road, slightly darkened band",,
+China Engineering Test Reactor (CENTER),29.7686032°N,103.474843°E,29.769138°,103.474829°,"guardhouse, light gray band around most of the facility perimeter",,
+High Flux Engineering Test Reactor (HFETR),29.7698046°N,103.4734375°E,29.770930°,103.472929°,"double fencing gate seen as two dark lines crossing over the entrance/exit road, then extending around the complex",,"the HFETR might not be worth including in the dataset unless we have more recent imagery because the double fence is very faint in the most recent Google Earth image. If you look at more recent imagery (e.g., Planet), it will be much clearer. The coordinates I'm giving here are for a double fencing entrance across the river, associated with the submarine propulsion reactor complex"
+Minjiang Test Reactor (MJTR),29.7697487°N,103.4716994°E,29.768490°,103.472203°,"double fencing gate seen as two dark lines over the entrance/exit road, then extending around the complex",,
+Submarine propulsion prototype reactor,29.7719559°N,103.4735012°E,29.771197°,103.474804°,"guardhouse from which double fencing seen as two dark lines emanates, than extends around the complex",,
+Aircraft carrier propulsion prototype reactor,29.7759797°N,103.475132°E,,,,,image not recent enough to show
+PRR pulsing reactor,29.6831472°N,103.55979°E,29.682192°,103.560593°,"guardhouse from which double fencing seen as two dark lines emanates, then extends around the complex",,"06/2020 image better in my opinion, but gate location is the same"
+China Mianyang Research Reactor (CMRR),31.5397702°N,104.796668°E,31.538078°,104.797262°,"guardhouse, dark gray band around the complex",,
+Plant 404 production reactor,40.2230589°N,97.3557664°E,40.222474°,97.355701°,"guardhouse from which double fencing seen by segmented shadows emanates, then extends around the complex",,
+HTR-10 reactor,40.2571058°N,116.1497762°E,40.256643°,116.149823°,"guardhouse from which double fencing seen by segmented shadows emanates, then extends around the complex",,
+NHR-5,40.2596129°N,116.14943°E,40.259122°,116.149444°,"guardhouse from which double fencing seen by segmented shadows emanates, then extends around the complex",,
+TMSR-LF1,38.9600922°N,102.6120061°E,38.959454°,102.612191°,"guardhouse from which double fencing seen by segmented shadows emanates, then extends around the complex, gray band",,
+Plant 405/Hanzhong-1,33.261102°N,107.4298147°E,33.259181°,107.430596°,"guardhouse from which a gray band enclosed by double fencing emanates, then extends around the complex",,
+Plant 405/Hanzhong-2,33.2623131°N,107.4300936°E,,,,,the entire complex shares the same entrance and fencing
+Plant 405/Hanzhong-3,33.2643854°N,107.4304691°E,,,,,the entire complex shares the same entrance and fencing
+Plant 405/Hanzhong-4-I,33.2652825°N,107.4306193°E,,,,,the entire complex shares the same entrance and fencing
+Plant 405/Hanzhong-4-II,33.2659374°N,107.4307266°E,,,,,the entire complex shares the same entrance and fencing
+Plant 814/Heping GDP,29.2358907°N,103.0618951°E,29.234023°,103.069844°,"guardhouse with double fencing seen as two dark lines emanating from one side, then extending around the complex, and double fencing gate across the entrance/exit road",,
+Plant 814 pilot facility,29.6442172°N,103.4901396°E,29.643654°,103.491489°,"guardhouse from which a gray band enclosed by double fencing emanates, then extends around the complex",,
+Plant 814 CEP-1,29.6770383°N,103.5346864°E,29.678209°,103.532970°,"guardhouse with double fencing seen as two dark lines emanating from one side, then extending around the complex, and double fencing gate across the entrance/exit road",,
+Plant 814 CEP-2,29.6796763°N,103.5345898°E,29.679758°,103.532838°,"guardhouse with double fencing seen as two dark lines emanating from it and extending around the complex, and double fencing gate across the entrance/exit road",,
+Plant 814 CEP-3,29.6775062°N,103.5358021°E,29.676233°,103.537234°,break in double fencing seen as two parallel dark lines on concrete at the entrance/exit,,
+Plant 504/Lanzhou GDP,36.1505394°N,103.51896°E,36.151545°,103.513463°,guardhouse with double fencing emanating from both sides and extending around the complex like a light gray band,,
+Plant 504/Lanzhou CEP-1,36.152376°N,103.521374°E,36.142514°,103.527274°,"guardhouse with double fencing seen as two dark lines emanating from it and extending around the complex, and double fencing gate across the entrance/exit road",,
+Plant 504/Lanzhou CEP-2,36.1503404°N,103.5246356°E,,,,,shared perimeter
+Plant 504/Lanzhou CEP-3,36.1490236°N,103.5262879°E,,,,,shared perimeter
+Plant 504/Lanzhou CEP-4,36.1476547°N,103.5253866°E,,,,,shared perimeter
+Plant 504/Lanzhou CEP-5,36.1471869°N,103.5247214°E,,,,,shared perimeter
+Plant 821 reprocessing,32.4939319°N,105.5760746°E,,,,,"on second thought, the fencing here is a little too faint. I'll give you another facility at the bottom"
+Plant 404 large military reprocessing plant,40.2358809°N,97.3711083°E,,,,,"the large military reprocessing plant has been decommissioned, may not be worth looking at"
+Plant 404 pilot civilian reprocessing plant,40.2365854°N,97.3689092°E,40.235443°,97.367990°,"guardhouse from which double fencing seen by segmented shadows emanates, then extends around the complex, and double fencing gate across the entrance/exit road",,"this row was originally the pilot military reprocessing plant. That plant has been decommissioned, and there is no longer a double fence around it. So I changed it to the pilot civilian reprocessing plant like the row below it but marked a different entrance/exit"
+Plant 404 pilot civilian reprocessing plant,40.2365854°N,97.3689092°E,40.240264°,97.373988°,double fencing gate cutting across entrance/exit road and rail track,,
+Jinta 200 tHM/yr reprocessing plant phase 1,40.3331048°N,98.4971138°E,40.328133°,98.490431°,"double fencing gate cutting across entrance/exit road, double fencing seen by segmented shadows extending around the complex",,this entrance is actually closest to the reprocessing plant's waste processing facility
+Jinta 200 tHM/yr reprocessing plant phase 2,40.3335628°N,98.501298°E,40.331514°,98.503145°,"break in double fencing at the entrance/exit, double fencing seen by segmented shadows extending around the complex",,
+Jinta 200 tHM/yr reprocessing plant phase 3,40.3375129°N,98.5022743°E,40.330394°,98.500930°,double fencing gate cutting across entrance/exit road with a guard post in the middle,,this entrance is not actually for phase 3. Phase 3 is still under construction
+Plant 202 fuel fabrication,40.654136°N,109.967421°E,40.655981°,109.967159°,"guardhouse from which double fencing seen by segmented shadows emanates, then extends around the complex, and double fencing gate across the entrance/exit road",,
+Plant 202 fuel fabrication northern section,40.662328°N,109.974351°E,40.661536°,109.972364°,"guardhouse from which double fencing seen by segmented shadows emanates, then extends around the complex, and double fencing gate across the entrance/exit road",,
+Plant 202 fuel fabrication entrance 2,40.654136°N,109.967421°E,40.654713°,109.964565°,"guardhouse from which double fencing seen by segmented shadows emanates, then extends around the complex, and double fencing gate across the entrance/exit road",,
+Plant 202 TRISO fabrication,40.656467°N,109.965386°E,40.655687°,109.965517°,"guardhouse from which double fencing seen by segmented shadows emanates, then extends around the complex, and double fencing gate across the entrance/exit road",,
+Plant 202 fuel fabrication western section,40.662031°N,109.969273°E,40.661946°,109.970199°,"guardhouse from which double fencing seen by segmented shadows emanates, then extends around the complex, and double fencing gate across the entrance/exit road",,
+Yibin fuel fabrication,28.696193°N,104.541883°E,28.695948°,104.540191°,"double fencing gate cutting across entrance/exit road, double fencing seen as two dark, straight, parallel lines emanating from one side",,there is another entrance/exit on the other side
+Plant 272 conversion,26.796792°N,112.641618°E,26.797539°,112.643553°,"guardhouse from which double fencing seen as two dark, straight, parallel lines emanates, then extends around the complex, and double gate across the entrance/exit road",,
+Plant 404 conversion 500tU,40.219191°°N,97.380088°E,40.219336°,97.378706°,"guardhouse from which double fencing seen by segmented shadows emanates, then extends around the complex, and double fencing gate across the entrance/exit road",,
+Plant 404 conversion rail entrance,40.218146°N,97.378309°E,40.218146°,97.378309°,double fencing gate cutting across rail tracks,,
+Plant 404 suspected waste/tritium facility,40.218183°N,97.379396°E,40.217519°,97.379421°,"guardhouse from which double fencing seen as two dark, straight, parallel lines emanates, then extends around the complex, and double gate across the entrance/exit road",,
+Tsinghua 200 unidentified,40.257013°N,116.151645°E,40.257385°,116.150900°,double fencing gate cutting across entrance/exit road,,I marked one gate. There are gates all around this complex
+Prototype space reactor,39.746204°N,116.035515°E,39.746020°,116.035795°,guardhouse from which double fencing seen by segmented shadows emanates,,
+Reactor physics experiments building,39.745306°N,116.035415°E,39.745063°,116.035493°,"guardhouse from which double fencing seen by segmented shadows emanates, double fencing gate seen as two dark lines over the entrance/exit",,
+MOX hot cell,39.742100°N,116.032583°E,39.741847°,116.032899°,"entrance/exit marked by a break in double fencing seen by segmented shadows, vehicle exiting",,
+Special material research,39.741740°N,116.031010°E,39.741676°,116.031449°,"guardhouse from which double fencing seen by segmented shadows emanates, darkened band",,
+Plant 404 4th subsidiary,40.229875°N,97.363532°E,40.231155°,97.365355°,"guardhouse from which double fencing seen by segmented shadows emanates, double fencing gate seen as two dark lines over the entrance/exit",,
+Plant 404 Isotope Project phase 2,40.228849°N,97.358619°E,40.226190°,97.362674°,very conspicuous checkpoint from which double fencing seen by segmented shadows enclosing a light gray band emanates from both sides,,
+Plant 404 Isotope Project phase 2 rail entrance/exit,40.228849°N,97.358619°E,40.230623°,97.354418°,"double fencing gate cutting across rail tracks, segmented shadows extending arround the complex",,
+Project Z sub-project 505,40.237143°N,97.376585°E,40.236155°,97.372076°,"guardhouse from which double fencing seen by segmented shadows emanates, then extends around the complex",,there are other entrances/exits around this complex
+Plant 404 Isotope Project phase 2 auxiliary complex,40.228049°N,97.354949°E,40.227783°,97.353303°,triple fencing gate cutting across the entrance/exit road,,
+Plant 404 Isotope Project phase 2 back entrance/exit,40.228849°N,97.358619°E,40.233297°,97.358715°,guardhouse with gates seen as black lines cutting across the entrance/exit road,,
+Plant 404 Isotope Project phase 2 standalone complex,40.232886°N,97.361690°E,40.233721°,97.361490°,quadruple fencing gate seen by segmented shadows cutting across the entrance/exit road,,
+Dadichong Lab,29.663355°N,103.563879°E,29.662684°,103.563197°,"guardhouse from which double fencing seen by segmented shadows emanates, gate over the entrance/exit",,
