@@ -7,12 +7,12 @@ from pathlib import Path
 client = OpenAI(api_key="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")
 
 def create_jsonl_file(jsonl_path):
-    """Create a JSONL file with the image and AAA presence."""
+    """Create a JSONL file with the image and double fence presence."""
     github_url = "https://github.com/selenasun1618/IMINT-Images/blob/main/Double-Fences/"
     local_dir = "../IMINT-Images/Double-Fences/"
     # Match actual repo directories
-    double_fences_local_folder = "df_val/"
-    Non_double_fences_local_folder = "no_df_val/"
+    double_fences_local_folder = "df_test/"
+    Non_double_fences_local_folder = "no_df_test/"
 
     total_written = 0
 
@@ -133,7 +133,7 @@ def run_eval(eval_id, file_id, user_prompt=ZERO_SHOT_PROMPT, model="gpt-4o-2024-
 def main():
 
     # 1. Create JSONL file
-    jsonl_path = Path(f"evals/double_fences_eval.jsonl").resolve()
+    jsonl_path = Path(f"evals/double_fences_test.jsonl").resolve()
     print(f"Creating JSONL file at: {jsonl_path}")
     create_jsonl_file(jsonl_path)
     file = upload_files(jsonl_path=jsonl_path)
@@ -144,9 +144,13 @@ def main():
     print(f"Eval created: {eval_obj.id}")
 
     """
-    For val set:
+    Validation:
     Jsonl file uploaded: file-5fu5Hd5fJszW4W1eHnAdDg
     Eval created: eval_68b3fd61739c8191863ff3a05434d02e
+
+    Test:
+    Jsonl file uploaded: file-4TsoHq7zLeKmierk4i2iwy
+    Eval created: eval_68b40ac4af048191a44f116991ca6c83
     """
 
     # 3. Run the eval

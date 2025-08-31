@@ -105,9 +105,9 @@ curl https://api.openai.com/v1/fine_tuning/jobs \
 """
 {
   "object": "fine_tuning.job",
-  "id": "ftjob-z6kW9cImlilXixrNBFOtbMWL",
+  "id": "ftjob-THXiNDDgiIbGVk6N0TW0Mtm5",
   "model": "gpt-4o-2024-08-06",
-  "created_at": 1756628723,
+  "created_at": 1756629799,
   "finished_at": null,
   "fine_tuned_model": null,
   "organization_id": "org-Siu2CQQYJYdlsuMSyrbni0Es",
@@ -123,7 +123,7 @@ curl https://api.openai.com/v1/fine_tuning/jobs \
   "trained_tokens": null,
   "error": {},
   "user_provided_suffix": null,
-  "seed": 1588808397,
+  "seed": 912295073,
   "estimated_finish": null,
   "integrations": [],
   "metadata": null,
