@@ -157,10 +157,11 @@ def main():
     Eval created: eval_68b514bf138481919d532144091bebf7
     """
     # 3. Run the eval
-    file_id = "file-6kTU3fCzxDqr8X1B9ARFTZ"
+    file_id = "file-JvorUASYQkp4oaeH814A24"
     eval_obj_id = "eval_68b514bf138481919d532144091bebf7"
-    model = "gpt-4o-2024-08-06"
-    eval_run = run_eval(name="Double Fences - No Guidance", eval_id=eval_obj_id, file_id=file_id, user_prompt=PROMPT_WITH_GUIDANCE, model=model)
+    # model = "gpt-4o-2024-08-06"
+    model = "ft:gpt-4o-2024-08-06:vannevar-labs::CAqIXaGQ"
+    eval_run = run_eval(name="[Test] DF FT - With Guidance", eval_id=eval_obj_id, file_id=file_id, user_prompt=PROMPT_WITH_GUIDANCE, model=model)
     print(f"Eval run started: {eval_run.id}")
 
     run = client.evals.runs.retrieve(eval_id=eval_obj_id, run_id=eval_run.id)

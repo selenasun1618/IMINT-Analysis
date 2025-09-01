@@ -58,7 +58,7 @@ def create_jsonl_file(jsonl_path):
                 
                 # Fallback if no reasoning trace found
                 if not explanation:
-                    explanation = "conspicuous checkpoint where double fencing seen as two dark, straight, parallel lines breaks"
+                    explanation = ""
                 
                 record = {
                     "messages": [
@@ -105,10 +105,9 @@ def create_jsonl_file(jsonl_path):
                     if any(part in img_base for part in facility_key.split('_')):
                         explanation = reasoning
                         break
-                
-                # Fallback if no reasoning trace found
+
                 if not explanation:
-                    explanation = "urban area with roads and buildings but no visible double fencing structures or parallel lines characteristic of security perimeters"
+                    explanation = ""
                 
                 record = {
                     "messages": [

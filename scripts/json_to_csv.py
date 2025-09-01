@@ -153,7 +153,7 @@ def convert_file(json_file_path: str, flatten: bool = True, extract_eval: bool =
     
     # Create CSV filename in the same directory
     if extract_eval:
-        csv_file = json_path.parent / f"{json_path.stem}_eval_analysis.csv"
+        csv_file = json_path.parent / f"{json_path.stem}_eval.csv"
     else:
         csv_file = json_path.parent / f"{json_path.stem}.csv"
     
