@@ -178,7 +178,7 @@ Examples:
     parser.add_argument("--output", "-o", help="Output CSV file path (optional, defaults to same folder as input)")
     parser.add_argument("--no-flatten", action="store_true", 
                        help="Don't flatten nested objects")
-    parser.add_argument("--extract-eval", action="store_true",
+    parser.add_argument("--extract-eval", action="store_true", default=True,
                        help="Extract specific eval columns (human_label, model_label, etc.)")
     
     args = parser.parse_args()

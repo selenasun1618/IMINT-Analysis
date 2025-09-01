@@ -6,12 +6,12 @@ from openai import OpenAI
 from aaa_prompts import *
 client = OpenAI(api_key="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")
 
-def create_jsonl_file(jsonl_path):
+def create_jsonl_file(jsonl_path, dataset):
     """Create a JSONL file with the image and AAA presence."""
-    github_url = "https://github.com/selenasun1618/IMINT-Images/blob/main/AAA/aaa_val_combined/"
+    github_url = f"https://github.com/selenasun1618/IMINT-Images/blob/main/AAA/aaa_{dataset}_combined/"
     local_dir = "../IMINT-Images/AAA/"
-    AAA_local_folder = "yes_aaa_val/"
-    Non_AAA_local_folder = "no_aaa_val/"
+    AAA_local_folder = f"yes_aaa_{dataset}/"
+    Non_AAA_local_folder = f"no_aaa_{dataset}/"
 
     total_written = 0
 
@@ -131,35 +131,36 @@ def run_eval(eval_id, file_id, user_prompt=ZERO_SHOT_PROMPT, model="gpt-4o-2024-
 
 def main():
 
+    dataset = "test" # "test" or "val"
     # 1. Create JSONL file
-    # jsonl_path = Path(f"evals/aaa_eval.jsonl").resolve()
+    # jsonl_path = Path(f"evals/aaa_eval_{dataset}.jsonl").resolve()
     # print(f"Creating JSONL file at: {jsonl_path}")
-    # create_jsonl_file(jsonl_path)
+    # create_jsonl_file(jsonl_path, dataset)
     # file = upload_files(jsonl_path=jsonl_path)
     # print(f"Jsonl file uploaded: {file.id}")
 
-    # # 3. Create the eval
+    # 2. Create the eval
     # eval_obj = create_eval()
     # print(f"Eval created: {eval_obj.id}")
 
     """
     Validation:
-    Jsonl file uploaded: file-3QWWDHt7bQ5AJxLZ6vZZCa
+    Jsonl file uploaded: file-2933Yg94LWtPWCAWWMqyme
     Test:
-    Jsonl file uploaded: file-X4tkn9ycbZBASGJc2fHokF
+    Jsonl file uploaded: file-Ki1XM9PVfsm5wMnoSnmygN
 
 
-    Eval: eval_68b417781cf48191b7c8906923c3edf1
+    Eval: eval_68b51c4aa8e481918bb15b4be75270cc
     """
 
-    file_id = "file-3QWWDHt7bQ5AJxLZ6vZZCa"
-    eval_obj_id = "eval_68b417781cf48191b7c8906923c3edf1"
+    # file_id = "file-3QWWDHt7bQ5AJxLZ6vZZCa"
+    # eval_obj_id = "eval_68b417781cf48191b7c8906923c3edf1"
 
-    # 4. Run the eval
-    # model = "ft:gpt-4o-2024-08-06:vannevar-labs::Buk6Uyac" # TODO REPLACE
-    model = "gpt-4o-2024-08-06"
-    eval_run = run_eval(eval_id=eval_obj_id, file_id=file_id, user_prompt=ZERO_SHOT_PROMPT, model=model)
-    print(f"Eval run started: {eval_run.id}")
+    # # 4. Run the eval
+    # # model = "ft:gpt-4o-2024-08-06:vannevar-labs::Buk6Uyac" # TODO REPLACE
+    # model = "gpt-4o-2024-08-06"
+    # eval_run = run_eval(eval_id=eval_obj_id, file_id=file_id, user_prompt=ZERO_SHOT_PROMPT, model=model)
+    # print(f"Eval run started: {eval_run.id}")
 
     # run = client.evals.runs.retrieve(eval_id=eval_obj_id, run_id=eval_run.id)
     # print(f"Eval run status: {run.status}")

@@ -146,7 +146,7 @@ def create_jsonl_file(jsonl_path):
     print(f"✅ JSONL file created at '{jsonl_path}' with {total_written} entries.")
 
 def main():
-    jsonl_path = Path("double_fences_training_with_explanations.jsonl").resolve()
+    jsonl_path = Path(__file__).parent / "double_fences_training_with_explanations.jsonl"
     print(f"Creating JSONL file at: {jsonl_path}")
     create_jsonl_file(jsonl_path)
 
@@ -157,5 +157,65 @@ if __name__ == "__main__":
 curl https://api.openai.com/v1/files \
   -H "Authorization: Bearer $OPENAI_API_KEY" \
   -F purpose="fine-tune" \
-  -F file="@./fine-tuning/double_fences_training_with_explanations.jsonl"
+  -F file="@./fine-tuning/double_fences_training_with_explanations.jsonl
+
+{
+  "object": "file",
+  "id": "file-VHettZk6iBTu5UPuDTvJnh",
+  "purpose": "fine-tune",
+  "filename": "double_fences_training_with_explanations.jsonl",
+  "bytes": 203108,
+  "created_at": 1756698524,
+  "expires_at": null,
+  "status": "processed",
+  "status_details": null
+}
+
+curl https://api.openai.com/v1/fine_tuning/jobs \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -d '{
+    "training_file": "file-VHettZk6iBTu5UPuDTvJnh",
+    "model": "gpt-4o-2024-08-06"
+    }'
+
+{
+  "object": "fine_tuning.job",
+  "id": "ftjob-nw9mOPdlnh7L4oqBgMuVgj63",
+  "model": "gpt-4o-2024-08-06",
+  "created_at": 1756698614,
+  "finished_at": null,
+  "fine_tuned_model": null,
+  "organization_id": "org-Siu2CQQYJYdlsuMSyrbni0Es",
+  "result_files": [],
+  "status": "validating_files",
+  "validation_file": null,
+  "training_file": "file-VHettZk6iBTu5UPuDTvJnh",
+  "hyperparameters": {
+    "n_epochs": "auto",
+    "batch_size": "auto",
+    "learning_rate_multiplier": "auto"
+  },
+  "trained_tokens": null,
+  "error": {},
+  "user_provided_suffix": null,
+  "seed": 2075608098,
+  "estimated_finish": null,
+  "integrations": [],
+  "metadata": null,
+  "usage_metrics": null,
+  "shared_with_openai": false,
+  "eval_id": null,
+  "method": {
+    "type": "supervised",
+    "supervised": {
+      "hyperparameters": {
+        "batch_size": "auto",
+        "learning_rate_multiplier": "auto",
+        "n_epochs": "auto"
+      }
+    }
+  }
+}
+
 """

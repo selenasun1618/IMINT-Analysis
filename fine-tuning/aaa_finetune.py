@@ -72,18 +72,18 @@ if __name__ == "__main__":
     create_jsonl_file(finetune_data)
 """
 curl https://api.openai.com/v1/files \
-  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -H "Authorization: Bearer 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" \
   -F purpose="fine-tune" \
   -F file="@./fine-tuning/aaa_training.jsonl"
 
 response:
 {
   "object": "file",
-  "id": "file-RkdZKcELZTCMw1iBQ9wY2u",
+  "id": "file-3Woghj6Sa1hHQWZHSE8Ui3",
   "purpose": "fine-tune",
   "filename": "aaa_training.jsonl",
-  "bytes": 415105,
-  "created_at": 1756629256,
+  "bytes": 422909,
+  "created_at": 1756699925,
   "expires_at": null,
   "status": "processed",
   "status_details": null
@@ -93,25 +93,25 @@ fine-tuning API call:
 
 curl https://api.openai.com/v1/fine_tuning/jobs \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -H "Authorization: Bearer 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" \
   -d '{
-    "training_file": "file-RkdZKcELZTCMw1iBQ9wY2u",
+    "training_file": "file-3Woghj6Sa1hHQWZHSE8Ui3",
     "model": "gpt-4o-2024-08-06"
     }'
 
 response:
 {
   "object": "fine_tuning.job",
-  "id": "ftjob-qEW6vLYjhTNVv1lwylwETBuF",
+  "id": "ftjob-mnHmpeM3KBn6QL2b9vh91evr",
   "model": "gpt-4o-2024-08-06",
-  "created_at": 1756629281,
+  "created_at": 1756699945,
   "finished_at": null,
   "fine_tuned_model": null,
   "organization_id": "org-Siu2CQQYJYdlsuMSyrbni0Es",
   "result_files": [],
   "status": "validating_files",
   "validation_file": null,
-  "training_file": "file-RkdZKcELZTCMw1iBQ9wY2u",
+  "training_file": "file-3Woghj6Sa1hHQWZHSE8Ui3",
   "hyperparameters": {
     "n_epochs": "auto",
     "batch_size": "auto",
@@ -120,7 +120,7 @@ response:
   "trained_tokens": null,
   "error": {},
   "user_provided_suffix": null,
-  "seed": 1452068772,
+  "seed": 152863708,
   "estimated_finish": null,
   "integrations": [],
   "metadata": null,

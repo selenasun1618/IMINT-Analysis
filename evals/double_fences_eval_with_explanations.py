@@ -83,14 +83,10 @@ def create_eval():
     return eval_obj
 
 
-def run_eval(name,eval_id, file_id, user_prompt=ZERO_SHOT_PROMPT_WITH_EXPLANATIONS, model="gpt-4o-2024-08-06"):
+def run_eval(name,eval_id, file_id, user_prompt=PROMPT, model="gpt-4o-2024-08-06"):
     """Run the eval with the given ID and file path."""
 
     developer_prompt = """
-    You are an expert satellite analyst responsible for informing the U.S. government about the status of nuclear power plants.
-    You are looking for double fences around buildings, which is an indicator that it's a nuclear site.
-    You are to decide whether the given image contains double fences or not and provide a detailed explanation.
-    Only consider the image as a candidate for double fences if it looks like an industrial facility.
     DO NOT RESPOND IN MARKDOWN!!!!! It is CRITICAL for national security purposes that you respond a JSON object only.
     """
 
@@ -138,37 +134,37 @@ def run_eval(name,eval_id, file_id, user_prompt=ZERO_SHOT_PROMPT_WITH_EXPLANATIO
 
 def main():
 
-    dataset = "val" # "test" or "val"
-    # 1. Create JSONL file
+    # dataset = "test" # "test" or "val"
+    # # 1. Create JSONL file
 
-    jsonl_path = Path(f"evals/double_fences_eval_with_explanations_{dataset}.jsonl").resolve()
-    print(f"Creating JSONL file at: {jsonl_path}")
-    create_jsonl_file(jsonl_path, dataset)
-    file = upload_files(jsonl_path=jsonl_path)
-    print(f"Jsonl file uploaded: {file.id}")
+    # jsonl_path = Path(f"evals/double_fences_eval_with_explanations_{dataset}.jsonl").resolve()
+    # print(f"Creating JSONL file at: {jsonl_path}")
+    # create_jsonl_file(jsonl_path, dataset)
+    # file = upload_files(jsonl_path=jsonl_path)
+    # print(f"Jsonl file uploaded: {file.id}")
 
-    # # 2. Create the eval
+    # # # 2. Create the eval
     # eval_obj = create_eval()
     # print(f"Eval created: {eval_obj.id}")
 
     """
     Validation:
-    Jsonl file uploaded: file-A34t3hDjx1DLMbZxLuJu9T
+    Jsonl file uploaded: file-6kTU3fCzxDqr8X1B9ARFTZ
 
     Test:
-    Jsonl file uploaded: file-KkQt6fzBkEDBFKJnEjjFxa
+    Jsonl file uploaded: file-JvorUASYQkp4oaeH814A24
 
-    Eval created: eval_68b4f904153c8191b9df2d83d5b7a122
+    Eval created: eval_68b514bf138481919d532144091bebf7
     """
     # 3. Run the eval
-    # file_id = "file-Km2EftR2vz3bCUAJfaqSrq"
-    # eval_obj_id = "eval_68b4f904153c8191b9df2d83d5b7a122"
-    # model = "gpt-4o-2024-08-06"
-    # eval_run = run_eval(name="Double Fences Eval", eval_id=eval_obj_id, file_id=file_id, user_prompt=ZERO_SHOT_PROMPT_WITH_EXPLANATIONS, model=model)
-    # print(f"Eval run started: {eval_run.id}")
+    file_id = "file-6kTU3fCzxDqr8X1B9ARFTZ"
+    eval_obj_id = "eval_68b514bf138481919d532144091bebf7"
+    model = "gpt-4o-2024-08-06"
+    eval_run = run_eval(name="Double Fences - No Guidance", eval_id=eval_obj_id, file_id=file_id, user_prompt=PROMPT_WITH_GUIDANCE, model=model)
+    print(f"Eval run started: {eval_run.id}")
 
-    # run = client.evals.runs.retrieve(eval_id=eval_obj_id, run_id=eval_run.id)
-    # print(f"Eval run status: {run.status}")
+    run = client.evals.runs.retrieve(eval_id=eval_obj_id, run_id=eval_run.id)
+    print(f"Eval run status: {run.status}")
 
 if __name__ == "__main__":
     main()
