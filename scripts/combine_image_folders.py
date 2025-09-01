@@ -48,15 +48,15 @@ def main():
     # combine_folders(df_base, "yes_df_val", "no_df_val", "df_val_combined")
     
     # # Test set
-    combine_folders(df_base, "yes_df_test", "no_df_test", "df_test_combined")
+    # combine_folders(df_base, "yes_df_test", "no_df_test", "df_test_combined")
     
     # print("\n🔄 Combining AAA datasets...")
     
     # AAA combinations
-    # aaa_base = "/Users/selenasun/Projects/IMINT-Images/AAA"
+    aaa_base = "/Users/selenasun/Projects/IMINT-Images/AAA"
     
     # # Train set
-    # combine_folders(aaa_base, "yes_aaa_train", "no_aaa_train", "aaa_train_combined")
+    combine_folders(aaa_base, "yes_aaa_train", "no_aaa_train", "aaa_train_combined")
     
     # # Validation set (if exists)
     # combine_folders(aaa_base, "yes_aaa_val", "no_aaa_val", "aaa_val_combined")

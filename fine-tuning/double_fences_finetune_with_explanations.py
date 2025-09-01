@@ -8,7 +8,7 @@ client = OpenAI(api_key="sk-proj-huEb3hWqBLsV43FqL4WV-uJpM9WTYjpEeM9D6X_G6WOxuIc
 
 def load_reasoning_traces():
     """Load reasoning traces from Chinese_facilities.csv"""
-    csv_path = "../coordinates/Chinese_facilities.csv"
+    csv_path = "/Users/selenasun/Projects/IMINT-Analysis/coordinates/Chinese_facilities.csv"
     df = pd.read_csv(csv_path)
     
     # Create a mapping from facility name to reasoning trace
@@ -28,6 +28,14 @@ def create_jsonl_file(jsonl_path):
     double_fences_local_folder = "yes_df_train/"
     no_double_fences_local_folder = "no_df_train/"
 
+    PROMPT = """
+    You are an expert satellite analyst responsible for informing the U.S. government about the status of nuclear power plants.
+    You are looking for double fences around buildings, which is an indicator that it's a nuclear site.
+    You are to decide whether the given image contains double fences or not and provide a detailed explanation.
+    Only consider the image as a candidate for double fences if it looks like an industrial facility.
+    DO NOT RESPOND IN MARKDOWN!!!!! It is CRITICAL for national security purposes that you respond a JSON object only.
+    """
+
     # Load reasoning traces from CSV
     reasoning_map = load_reasoning_traces()
     
@@ -39,7 +47,7 @@ def create_jsonl_file(jsonl_path):
         for img_name in os.listdir(df_path):
             if img_name.lower().endswith(('.png', '.jpg', '.jpeg')):
                 # Try to match image name to facility for explanation
-                explanation = "conspicuous checkpoint where double fencing seen as two dark, straight, parallel lines breaks"
+                explanation = None
                 
                 # Try to find matching reasoning trace
                 img_base = img_name.replace('.png', '').replace('.jpg', '').replace('.jpeg', '')
@@ -48,8 +56,16 @@ def create_jsonl_file(jsonl_path):
                         explanation = reasoning
                         break
                 
+                # Fallback if no reasoning trace found
+                if not explanation:
+                    explanation = "conspicuous checkpoint where double fencing seen as two dark, straight, parallel lines breaks"
+                
                 record = {
                     "messages": [
+                        {
+                            "role": "system",
+                            "content":  PROMPT
+                        },
                         {
                             "role": "user",
                             "content": "Classify whether the following satellite image contains double fences and provide an explanation. Respond with JSON: {\"double_fences_present\": \"yes\" or \"no\", \"explanation\": \"your reasoning\"}."
@@ -81,10 +97,25 @@ def create_jsonl_file(jsonl_path):
         no_df_path = os.path.join(local_dir, no_double_fences_local_folder)
         for img_name in os.listdir(no_df_path):
             if img_name.lower().endswith(('.png', '.jpg', '.jpeg')):
-                explanation = "urban area with roads and buildings but no visible double fencing structures or parallel lines characteristic of security perimeters"
+                explanation = None
+                
+                # Try to find matching reasoning trace
+                img_base = img_name.replace('.png', '').replace('.jpg', '').replace('.jpeg', '')
+                for facility_key, reasoning in reasoning_map.items():
+                    if any(part in img_base for part in facility_key.split('_')):
+                        explanation = reasoning
+                        break
+                
+                # Fallback if no reasoning trace found
+                if not explanation:
+                    explanation = "urban area with roads and buildings but no visible double fencing structures or parallel lines characteristic of security perimeters"
                 
                 record = {
                     "messages": [
+                        {
+                            "role": "system",
+                            "content": PROMPT
+                        },
                         {
                             "role": "user",
                             "content": "Classify whether the following satellite image contains double fences and provide an explanation. Respond with JSON: {\"double_fences_present\": \"yes\" or \"no\", \"explanation\": \"your reasoning\"}."
@@ -121,3 +152,10 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+"""
+curl https://api.openai.com/v1/files \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -F purpose="fine-tune" \
+  -F file="@./fine-tuning/double_fences_training_with_explanations.jsonl"
+"""

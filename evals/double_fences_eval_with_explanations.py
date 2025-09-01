@@ -6,12 +6,12 @@ from pathlib import Path
 
 client = OpenAI(api_key="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")
 
-def create_jsonl_file(jsonl_path):
+def create_jsonl_file(jsonl_path, dataset):
     """Create a JSONL file with the image, double fence presence, and expected explanations."""
-    github_url = "https://github.com/selenasun1618/IMINT-Images/blob/main/Double-Fences/df_val_combined/"
+    github_url = f"https://github.com/selenasun1618/IMINT-Images/blob/main/Double-Fences/df_{dataset}_combined/"
     local_dir = "../IMINT-Images/Double-Fences/"
-    double_fences_local_folder = "yes_df_val/"
-    Non_double_fences_local_folder = "no_df_val/"
+    double_fences_local_folder = f"yes_df_{dataset}/"
+    Non_double_fences_local_folder = f"no_df_{dataset}/"
 
     total_written = 0
 
@@ -25,7 +25,6 @@ def create_jsonl_file(jsonl_path):
                         "double_fences_present": "yes",
                         "image_name": img_name,
                         "image_url": f"{github_url}{img_name}?raw=true",
-                        "expected_explanation": "should identify double fencing features like parallel lines, gates, checkpoints, or segmented shadows"
                     }
                 }
                 f.write(json.dumps(record, ensure_ascii=False) + "\n")
@@ -40,7 +39,6 @@ def create_jsonl_file(jsonl_path):
                         "double_fences_present": "no",
                         "image_name": img_name,
                         "image_url": f"{github_url}{img_name}?raw=true",
-                        "expected_explanation": "should explain absence of double fencing structures in urban/civilian areas"
                     }
                 }
                 f.write(json.dumps(record, ensure_ascii=False) + "\n")
@@ -67,7 +65,6 @@ def create_eval():
                     "double_fences_present": {"type": "string"},
                     "image_name": {"type": "string"},
                     "image_url": {"type": "string"},
-                    "expected_explanation": {"type": "string"},
                 },
                 "required": ["image_url", "double_fences_present", "image_name"],
             },
@@ -77,7 +74,7 @@ def create_eval():
             {
                 "name": "Double Fences classification grader",
                 "type": "string_check",
-                "input": "{{ sample.output_json.double_fences_present.strip().lower() }}",
+                "input": "{{ sample.output_json.double_fences_present }}",
                 "operation": "eq",
                 "reference": "{{ item.double_fences_present }}"
             }
@@ -86,18 +83,20 @@ def create_eval():
     return eval_obj
 
 
-def run_eval(eval_id, file_id, user_prompt=ZERO_SHOT_PROMPT_WITH_EXPLANATIONS, model="gpt-4o-2024-08-06"):
+def run_eval(name,eval_id, file_id, user_prompt=ZERO_SHOT_PROMPT_WITH_EXPLANATIONS, model="gpt-4o-2024-08-06"):
     """Run the eval with the given ID and file path."""
 
     developer_prompt = """
     You are an expert satellite analyst responsible for informing the U.S. government about the status of nuclear power plants.
     You are looking for double fences around buildings, which is an indicator that it's a nuclear site.
     You are to decide whether the given image contains double fences or not and provide a detailed explanation.
+    Only consider the image as a candidate for double fences if it looks like an industrial facility.
+    DO NOT RESPOND IN MARKDOWN!!!!! It is CRITICAL for national security purposes that you respond a JSON object only.
     """
 
     eval_run = client.evals.runs.create(
         eval_id=eval_id,
-        name="Double Fences Eval with Explanations Run",
+        name=name,
         data_source={
             "type": "completions",
             "model": model,
@@ -139,24 +138,37 @@ def run_eval(eval_id, file_id, user_prompt=ZERO_SHOT_PROMPT_WITH_EXPLANATIONS, m
 
 def main():
 
+    dataset = "val" # "test" or "val"
     # 1. Create JSONL file
-    jsonl_path = Path(f"evals/double_fences_eval_with_explanations.jsonl").resolve()
+
+    jsonl_path = Path(f"evals/double_fences_eval_with_explanations_{dataset}.jsonl").resolve()
     print(f"Creating JSONL file at: {jsonl_path}")
-    create_jsonl_file(jsonl_path)
+    create_jsonl_file(jsonl_path, dataset)
     file = upload_files(jsonl_path=jsonl_path)
     print(f"Jsonl file uploaded: {file.id}")
 
-    # 2. Create the eval
-    eval_obj = create_eval()
-    print(f"Eval created: {eval_obj.id}")
+    # # 2. Create the eval
+    # eval_obj = create_eval()
+    # print(f"Eval created: {eval_obj.id}")
 
+    """
+    Validation:
+    Jsonl file uploaded: file-A34t3hDjx1DLMbZxLuJu9T
+
+    Test:
+    Jsonl file uploaded: file-KkQt6fzBkEDBFKJnEjjFxa
+
+    Eval created: eval_68b4f904153c8191b9df2d83d5b7a122
+    """
     # 3. Run the eval
-    model = "gpt-4o-2024-08-06"
-    eval_run = run_eval(eval_id=eval_obj.id, file_id=file.id, user_prompt=ZERO_SHOT_PROMPT_WITH_EXPLANATIONS, model=model)
-    print(f"Eval run started: {eval_run.id}")
+    # file_id = "file-Km2EftR2vz3bCUAJfaqSrq"
+    # eval_obj_id = "eval_68b4f904153c8191b9df2d83d5b7a122"
+    # model = "gpt-4o-2024-08-06"
+    # eval_run = run_eval(name="Double Fences Eval", eval_id=eval_obj_id, file_id=file_id, user_prompt=ZERO_SHOT_PROMPT_WITH_EXPLANATIONS, model=model)
+    # print(f"Eval run started: {eval_run.id}")
 
-    run = client.evals.runs.retrieve(eval_id=eval_obj.id, run_id=eval_run.id)
-    print(f"Eval run status: {run.status}")
+    # run = client.evals.runs.retrieve(eval_id=eval_obj_id, run_id=eval_run.id)
+    # print(f"Eval run status: {run.status}")
 
 if __name__ == "__main__":
     main()
