@@ -49,6 +49,7 @@ def load_jsonl(file_path: str) -> List[Dict]:
 def extract_eval_columns(data: List[Dict]) -> List[Dict]:
     """
     Extract specific columns for eval analysis and rename them.
+    Supports both AAA and double fences evaluation data.
     
     Args:
         data: List of flattened eval data
@@ -59,22 +60,68 @@ def extract_eval_columns(data: List[Dict]) -> List[Dict]:
     extracted_data = []
     
     for item in data:
-        # Extract model output JSON
-        model_output_str = item.get('sample_outputs_0_content', '{}')
+        # Detect data type and extract accordingly
+        if 'item_aaa_present' in item:
+            # AAA evaluation data (flattened structure)
+            model_output_str = item.get('sample_outputs_0_content', '{}')
+            human_label_key = 'item_aaa_present'
+            model_label_key = 'aaa_present'
+        elif 'item_double_fences_present' in item:
+            # Double fences evaluation data (flattened structure)
+            model_output_str = item.get('sample_outputs_0_content', '{}')
+            human_label_key = 'item_double_fences_present'
+            model_label_key = 'double_fences_present'
+        elif 'item' in item and isinstance(item['item'], dict):
+            # Non-flattened structure - check item content
+            if 'aaa_present' in item['item']:
+                # AAA evaluation data
+                model_output_str = item.get('sample', {}).get('outputs', [{}])[0].get('content', '{}')
+                human_label_key = 'aaa_present'
+                model_label_key = 'aaa_present'
+                # Extract from nested structure
+                human_label = item['item'].get('aaa_present', '')
+                image_name = item['item'].get('image_name', '')
+                image_url = item['item'].get('image_url', '')
+            elif 'double_fences_present' in item['item']:
+                # Double fences evaluation data
+                model_output_str = item.get('sample', {}).get('outputs', [{}])[0].get('content', '{}')
+                human_label_key = 'double_fences_present'
+                model_label_key = 'double_fences_present'
+                # Extract from nested structure
+                human_label = item['item'].get('double_fences_present', '')
+                image_name = item['item'].get('image_name', '')
+                image_url = item['item'].get('image_url', '')
+            else:
+                # Unknown format, skip
+                continue
+        else:
+            # Unknown format, skip
+            continue
+        
         try:
             model_output = json.loads(model_output_str)
         except json.JSONDecodeError:
             model_output = {}
         
         # Create new row with renamed columns
-        row = {
-            'human_label': item.get('item_double_fences_present', ''),
-            'human_explanation': item.get('item_expected_explanation', ''),
-            'image_name': item.get('item_image_name', ''),
-            'image_url': item.get('item_image_url', ''),
-            'model_label': model_output.get('double_fences_present', ''),
-            'model_explanation': model_output.get('explanation', '')
-        }
+        if 'item' in item and isinstance(item['item'], dict):
+            # Use already extracted values for nested structure
+            row = {
+                'human_label': human_label,
+                'image_name': image_name,
+                'image_url': image_url,
+                'model_label': model_output.get(model_label_key, ''),
+                'model_explanation': model_output.get('explanation', '')
+            }
+        else:
+            # Use flattened structure
+            row = {
+                'human_label': item.get(human_label_key, ''),
+                'image_name': item.get('item_image_name', ''),
+                'image_url': item.get('item_image_url', ''),
+                'model_label': model_output.get(model_label_key, ''),
+                'model_explanation': model_output.get('explanation', '')
+            }
         
         extracted_data.append(row)
     
@@ -107,7 +154,7 @@ def json_to_csv_manual(json_file: str, csv_file: str, flatten: bool = True, extr
     # Extract specific eval columns if requested
     if extract_eval:
         data = extract_eval_columns(data)
-        headers = ['human_label', 'human_explanation', 'image_name', 'image_url', 'model_label', 'model_explanation']
+        headers = ['human_label', 'image_name', 'image_url', 'model_label', 'model_explanation']
     else:
         # Get all unique keys for headers
         all_keys = set()

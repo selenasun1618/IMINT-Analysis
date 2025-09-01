@@ -23,16 +23,16 @@ def create_jsonl_file(jsonl_path):
                     "messages": [
                         {
                             "role": "user",
-                            "content": "Classify whether the following satellite image contains any anti-aircraft artillery (AAA). Respond only with \"yes\" or \"no\"."
-                        },
-                        {
-                             "role": "user",
-                             "content": [
-                                 {
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "Classify whether the following satellite image contains any anti-aircraft artillery (AAA). Respond only with \"yes\" or \"no\"."
+                                },
+                                {
                                     "type": "image_url",
                                     "image_url": { "url": f"{github_url}{img_name}?raw=true" }
                                 }
-                             ]
+                            ]
                         },
                         { "role": "assistant", "content": "yes" }
                     ]
@@ -48,16 +48,16 @@ def create_jsonl_file(jsonl_path):
                     "messages": [
                         {
                             "role": "user",
-                            "content": "Classify whether the following satellite image contains any anti-aircraft artillery (AAA). Respond only with \"yes\" or \"no\"."
-                        },
-                        {
-                             "role": "user",
-                             "content": [
-                                 {
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "Classify whether the following satellite image contains any anti-aircraft artillery (AAA). Respond only with \"yes\" or \"no\"."
+                                },
+                                {
                                     "type": "image_url",
                                     "image_url": { "url": f"{github_url}{img_name}?raw=true" }
                                 }
-                             ]
+                            ]
                         },
                         { "role": "assistant", "content": "no" }
                     ]
@@ -70,6 +70,7 @@ def create_jsonl_file(jsonl_path):
 if __name__ == "__main__":
     finetune_data = "/Users/selenasun/Projects/IMINT-Analysis/fine-tuning/aaa_training.jsonl"
     create_jsonl_file(finetune_data)
+    
 """
 curl https://api.openai.com/v1/files \
   -H "Authorization: Bearer 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" \

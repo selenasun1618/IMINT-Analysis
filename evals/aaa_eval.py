@@ -54,9 +54,9 @@ def upload_files(jsonl_path):
     )
     return file
 
-def create_eval():
+def create_eval(name):
     eval_obj = client.evals.create(
-        name="AAA Eval",
+        name=name,
         data_source_config={
             "type": "custom",
             "item_schema": {
@@ -74,7 +74,7 @@ def create_eval():
             {
                 "name": "AAA classification grader",
                 "type": "string_check",
-                "input": "{{ sample.output_text.strip().lower() }}",
+                "input": "{{ sample.output_json.aaa_present }}",
                 "operation": "eq",
                 "reference": "{{ item.aaa_present }}"
             }
@@ -83,13 +83,28 @@ def create_eval():
     return eval_obj
 
 
-def run_eval(eval_id, file_id, user_prompt=ZERO_SHOT_PROMPT, model="gpt-4o-2024-08-06"):
+def run_eval(eval_id, file_id, user_prompt=PROMPT, model="gpt-4o-2024-08-06"):
     """Run the eval with the given ID and file path."""
 
     developer_prompt = """
+    CRITICAL: You MUST respond with ONLY a valid JSON object. NO markdown, NO code blocks, NO explanations outside the JSON.
+
     You are an expert nuclear analyst responsible for informing the U.S. government about the status of nuclear power plants.
     You are looking for anti-aircraft artillery (AAA) sites, which are indicators of nuclear power plants nearby.
-    You are to decide whether the given image contains an AAA site or not.
+    You are to decide whether the given image contains an AAA site or not and provide a detailed explanation.
+
+    REQUIRED FORMAT:
+    {"aaa_present": "yes", "explanation": "your detailed analysis here"}
+    OR
+    {"aaa_present": "no", "explanation": "your detailed analysis here"}
+
+    DO NOT include:
+    - Markdown formatting (```json, ```, etc.)
+    - Any text before or after the JSON
+    - Code block delimiters
+    - Additional commentary
+
+    ONLY return the raw JSON object as shown above.
     """
 
     eval_run = client.evals.runs.create(
@@ -102,10 +117,15 @@ def run_eval(eval_id, file_id, user_prompt=ZERO_SHOT_PROMPT, model="gpt-4o-2024-
             "response_format": {
                 "type": "json_schema",
                 "json_schema": {
-                    "name": "aaa_presence",
+                    "name": "aaa_with_explanation",
                     "schema": {
-                        "type": "string",
-                        "enum": ["yes", "no"]
+                        "type": "object",
+                        "properties": {
+                            "aaa_present": {"type": "string", "enum": ["yes", "no"]},
+                            "explanation": {"type": "string"}
+                        },
+                        "required": ["aaa_present", "explanation"],
+                        "additionalProperties": False
                     },
                     "strict": True
                 }
@@ -120,7 +140,17 @@ def run_eval(eval_id, file_id, user_prompt=ZERO_SHOT_PROMPT, model="gpt-4o-2024-
                     },
                     {
                         "role": "user",
-                        "content": user_prompt
+                        "content": [
+                            {
+                                "type": "input_text",
+                                "text": user_prompt.replace("{{ item.image_url }}", "")
+                            },
+                            {
+                                "type": "input_image",
+                                "image_url": "{{ item.image_url }}",
+                                "detail": "auto"
+                            }
+                        ]
                     }
                 ]
             }
@@ -140,30 +170,25 @@ def main():
     # print(f"Jsonl file uploaded: {file.id}")
 
     # 2. Create the eval
-    # eval_obj = create_eval()
-    # print(f"Eval created: {eval_obj.id}")
+    eval_obj = create_eval(name="[Test] AAA - FT NO Guidance")
+    print(f"Eval created: {eval_obj.id}")
 
     """
     Validation:
-    Jsonl file uploaded: file-2933Yg94LWtPWCAWWMqyme
+    Jsonl file uploaded: file-SayEY2hJZgeMD3qr8b9JGf
     Test:
     Jsonl file uploaded: file-Ki1XM9PVfsm5wMnoSnmygN
-
-
-    Eval: eval_68b51c4aa8e481918bb15b4be75270cc
     """
 
-    # file_id = "file-3QWWDHt7bQ5AJxLZ6vZZCa"
-    # eval_obj_id = "eval_68b417781cf48191b7c8906923c3edf1"
-
-    # # 4. Run the eval
-    # # model = "ft:gpt-4o-2024-08-06:vannevar-labs::Buk6Uyac" # TODO REPLACE
+    file_id = "file-Ki1XM9PVfsm5wMnoSnmygN"
+    # 4. Run the eval
+    model = "ft:gpt-4o-2024-08-06:vannevar-labs::CAri8wSh"
     # model = "gpt-4o-2024-08-06"
-    # eval_run = run_eval(eval_id=eval_obj_id, file_id=file_id, user_prompt=ZERO_SHOT_PROMPT, model=model)
-    # print(f"Eval run started: {eval_run.id}")
+    eval_run = run_eval(eval_id=eval_obj.id, file_id=file_id, user_prompt=PROMPT, model=model)
+    print(f"Eval run started: {eval_run.id}")
 
-    # run = client.evals.runs.retrieve(eval_id=eval_obj_id, run_id=eval_run.id)
-    # print(f"Eval run status: {run.status}")
+    run = client.evals.runs.retrieve(eval_id=eval_obj.id, run_id=eval_run.id)
+    print(f"Eval run status: {run.status}")
 
 if __name__ == "__main__":
     main()

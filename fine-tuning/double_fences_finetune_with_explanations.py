@@ -68,11 +68,11 @@ def create_jsonl_file(jsonl_path):
                         },
                         {
                             "role": "user",
-                            "content": "Classify whether the following satellite image contains double fences and provide an explanation. Respond with JSON: {\"double_fences_present\": \"yes\" or \"no\", \"explanation\": \"your reasoning\"}."
-                        },
-                        {
-                            "role": "user",
                             "content": [
+                                {
+                                    "type": "text",
+                                    "text": "Classify whether the following satellite image contains double fences and provide an explanation. Respond with JSON: {\"double_fences_present\": \"yes\" or \"no\", \"explanation\": \"your reasoning\"}."
+                                },
                                 {
                                     "type": "image_url",
                                     "image_url": {
@@ -97,17 +97,7 @@ def create_jsonl_file(jsonl_path):
         no_df_path = os.path.join(local_dir, no_double_fences_local_folder)
         for img_name in os.listdir(no_df_path):
             if img_name.lower().endswith(('.png', '.jpg', '.jpeg')):
-                explanation = None
-                
-                # Try to find matching reasoning trace
-                img_base = img_name.replace('.png', '').replace('.jpg', '').replace('.jpeg', '')
-                for facility_key, reasoning in reasoning_map.items():
-                    if any(part in img_base for part in facility_key.split('_')):
-                        explanation = reasoning
-                        break
-
-                if not explanation:
-                    explanation = ""
+                explanation = "This image does not show double fences."
                 
                 record = {
                     "messages": [
@@ -117,11 +107,11 @@ def create_jsonl_file(jsonl_path):
                         },
                         {
                             "role": "user",
-                            "content": "Classify whether the following satellite image contains double fences and provide an explanation. Respond with JSON: {\"double_fences_present\": \"yes\" or \"no\", \"explanation\": \"your reasoning\"}."
-                        },
-                        {
-                            "role": "user",
                             "content": [
+                                {
+                                    "type": "text",
+                                    "text": "Classify whether the following satellite image contains double fences and provide an explanation. Respond with JSON: {\"double_fences_present\": \"yes\" or \"no\", \"explanation\": \"your reasoning\"}."
+                                },
                                 {
                                     "type": "image_url",
                                     "image_url": {
@@ -156,15 +146,15 @@ if __name__ == "__main__":
 curl https://api.openai.com/v1/files \
   -H "Authorization: Bearer $OPENAI_API_KEY" \
   -F purpose="fine-tune" \
-  -F file="@./fine-tuning/double_fences_training_with_explanations.jsonl
+  -F file="@./fine-tuning/double_fences_training_with_explanations.jsonl"
 
 {
   "object": "file",
-  "id": "file-VHettZk6iBTu5UPuDTvJnh",
+  "id": "file-9bMmNNY83kTwPucrWCfhYw",
   "purpose": "fine-tune",
   "filename": "double_fences_training_with_explanations.jsonl",
-  "bytes": 203108,
-  "created_at": 1756698524,
+  "bytes": 198788,
+  "created_at": 1756709576,
   "expires_at": null,
   "status": "processed",
   "status_details": null
@@ -174,22 +164,22 @@ curl https://api.openai.com/v1/fine_tuning/jobs \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $OPENAI_API_KEY" \
   -d '{
-    "training_file": "file-VHettZk6iBTu5UPuDTvJnh",
+    "training_file": "file-9bMmNNY83kTwPucrWCfhYw",
     "model": "gpt-4o-2024-08-06"
     }'
 
 {
   "object": "fine_tuning.job",
-  "id": "ftjob-nw9mOPdlnh7L4oqBgMuVgj63",
+  "id": "ftjob-KIPBxwNVfjodXFgecbZH284e",
   "model": "gpt-4o-2024-08-06",
-  "created_at": 1756698614,
+  "created_at": 1756709594,
   "finished_at": null,
   "fine_tuned_model": null,
   "organization_id": "org-Siu2CQQYJYdlsuMSyrbni0Es",
   "result_files": [],
   "status": "validating_files",
   "validation_file": null,
-  "training_file": "file-VHettZk6iBTu5UPuDTvJnh",
+  "training_file": "file-9bMmNNY83kTwPucrWCfhYw",
   "hyperparameters": {
     "n_epochs": "auto",
     "batch_size": "auto",
@@ -198,7 +188,7 @@ curl https://api.openai.com/v1/fine_tuning/jobs \
   "trained_tokens": null,
   "error": {},
   "user_provided_suffix": null,
-  "seed": 2075608098,
+  "seed": 224793251,
   "estimated_finish": null,
   "integrations": [],
   "metadata": null,

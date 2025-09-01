@@ -54,9 +54,9 @@ def upload_files(jsonl_path):
     )
     return file
 
-def create_eval():
+def create_eval(eval_name):
     eval_obj = client.evals.create(
-        name="Double Fences Eval with Explanations",
+        name=eval_name,
         data_source_config={
             "type": "custom",
             "item_schema": {
@@ -87,7 +87,42 @@ def run_eval(name,eval_id, file_id, user_prompt=PROMPT, model="gpt-4o-2024-08-06
     """Run the eval with the given ID and file path."""
 
     developer_prompt = """
-    DO NOT RESPOND IN MARKDOWN!!!!! It is CRITICAL for national security purposes that you respond a JSON object only.
+    ONLY RESPOND IN JSON OBJECT FORMAT!!!!! It is CRITICAL for national security purposes that you respond a JSON object only.
+
+    Input: {image_url}
+    Response:
+    {
+    "double_fences_present": "yes" or "no",
+    "explanation": "detailed reasoning for your decision"
+    }
+
+    Input: {image_url}
+    Response:
+    {
+    "double_fences_present": "yes" or "no",
+    "explanation": "detailed reasoning for your decision"
+    }
+
+    Input: {image_url}
+    Response:
+    {
+    "double_fences_present": "yes" or "no",
+    "explanation": "detailed reasoning for your decision"
+    }
+
+    Input: {image_url}
+    Response:
+    {
+    "double_fences_present": "yes" or "no",
+    "explanation": "detailed reasoning for your decision"
+    }
+
+    Input: {image_url}
+    Response:
+    {
+    "double_fences_present": "yes" or "no",
+    "explanation": "detailed reasoning for your decision"
+    }
     """
 
     eval_run = client.evals.runs.create(
@@ -123,7 +158,17 @@ def run_eval(name,eval_id, file_id, user_prompt=PROMPT, model="gpt-4o-2024-08-06
                     },
                     {
                         "role": "user",
-                        "content": user_prompt
+                        "content": [
+                            {
+                                "type": "input_text",
+                                "text": user_prompt.replace("{{ item.image_url }}", "")
+                            },
+                            {
+                                "type": "input_image",
+                                "image_url": "{{ item.image_url }}",
+                                "detail": "auto"
+                            }
+                        ]
                     }
                 ]
             }
@@ -144,8 +189,8 @@ def main():
     # print(f"Jsonl file uploaded: {file.id}")
 
     # # # 2. Create the eval
-    # eval_obj = create_eval()
-    # print(f"Eval created: {eval_obj.id}")
+    eval_obj = create_eval('[Test] DF - FT WITH Guidance')
+    print(f"Eval created: {eval_obj.id}")
 
     """
     Validation:
@@ -158,13 +203,12 @@ def main():
     """
     # 3. Run the eval
     file_id = "file-JvorUASYQkp4oaeH814A24"
-    eval_obj_id = "eval_68b514bf138481919d532144091bebf7"
     # model = "gpt-4o-2024-08-06"
-    model = "ft:gpt-4o-2024-08-06:vannevar-labs::CAqIXaGQ"
-    eval_run = run_eval(name="[Test] DF FT - With Guidance", eval_id=eval_obj_id, file_id=file_id, user_prompt=PROMPT_WITH_GUIDANCE, model=model)
+    model = "ft:gpt-4o-2024-08-06:vannevar-labs::CAt9XtJZ"
+    eval_run = run_eval(name="Yup", eval_id=eval_obj.id, file_id=file_id, user_prompt=PROMPT_WITH_GUIDANCE, model=model)
     print(f"Eval run started: {eval_run.id}")
 
-    run = client.evals.runs.retrieve(eval_id=eval_obj_id, run_id=eval_run.id)
+    run = client.evals.runs.retrieve(eval_id=eval_obj.id, run_id=eval_run.id)
     print(f"Eval run status: {run.status}")
 
 if __name__ == "__main__":

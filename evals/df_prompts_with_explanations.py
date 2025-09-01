@@ -15,9 +15,35 @@ Respond with JSON in this format:
   "double_fences_present": "yes" or "no",
   "explanation": "detailed reasoning for your decision"
 }
+JSON OBJECT ONLY!!!! I REPEAT: JSON OBJECT ONLY!!!!
 
-Here is the image:
-{{ item.image_url }}
+Input: {image_url}
+Response:
+{
+  "double_fences_present": "yes" or "no",
+  "explanation": "detailed reasoning for your decision"
+}
+
+Input: {image_url}
+Response:
+{
+  "double_fences_present": "yes" or "no",
+  "explanation": "detailed reasoning for your decision"
+}
+
+Input: {image_url}
+Response:
+{
+  "double_fences_present": "yes" or "no",
+  "explanation": "detailed reasoning for your decision"
+}
+
+Input: {image_url}
+Response:
+{
+  "double_fences_present": "yes" or "no",
+  "explanation": "detailed reasoning for your decision"
+}
 """
 
 PROMPT = """
@@ -30,7 +56,54 @@ Respond with JSON in this format:
   "double_fences_present": "yes" or "no",
   "explanation": "detailed reasoning for your decision"
 }
+JSON OBJECT ONLY!!!! I REPEAT: JSON OBJECT ONLY!!!!
 
-Here is the image:
-{{ item.image_url }}
+Input: {image_url}
+Response:
+{
+  "double_fences_present": "yes" or "no",
+  "explanation": "detailed reasoning for your decision"
+}
+
+Input: {image_url}
+Response:
+{
+  "double_fences_present": "yes" or "no",
+  "explanation": "detailed reasoning for your decision"
+}
+
+Input: {image_url}
+Response:
+{
+  "double_fences_present": "yes" or "no",
+  "explanation": "detailed reasoning for your decision"
+}
+
+Input: {image_url}
+Response:
+{
+  "double_fences_present": "yes" or "no",
+  "explanation": "detailed reasoning for your decision"
+}
+
+Input: {image_url}
+Response:
+{
+  "double_fences_present": "yes" or "no",
+  "explanation": "detailed reasoning for your decision"
+}
+
+Input: {image_url}
+Response:
+{
+  "double_fences_present": "yes" or "no",
+  "explanation": "detailed reasoning for your decision"
+}
+
+Input: {image_url}
+Response:
+{
+  "double_fences_present": "yes" or "no",
+  "explanation": "detailed reasoning for your decision"
+}
 """
