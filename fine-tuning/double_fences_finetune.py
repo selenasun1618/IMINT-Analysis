@@ -6,10 +6,10 @@ client = OpenAI(api_key="sk-proj-huEb3hWqBLsV43FqL4WV-uJpM9WTYjpEeM9D6X_G6WOxuIc
 
 def create_jsonl_file(jsonl_path):
     """Create a JSONL file with the image and AAA presence."""
-    github_url = "https://github.com/selenasun1618/IMINT-Images/blob/main/Double-Fences/"
+    github_url = "https://github.com/selenasun1618/IMINT-Images/blob/main/Double-Fences/df_train_combined/"
     local_dir = "../IMINT-Images/Double-Fences/"
     # Match actual repo directories
-    double_fences_local_folder = "df_train/"
+    double_fences_local_folder = "yes_df_train/"
     Non_double_fences_local_folder = "no_df_train/"
 
     total_written = 0
@@ -30,7 +30,7 @@ def create_jsonl_file(jsonl_path):
                              "content": [
                                  {
                                     "type": "image_url",
-                                    "image_url": { "url": f"{github_url}{double_fences_local_folder}{img_name}?raw=true" }
+                                    "image_url": { "url": f"{github_url}{img_name}?raw=true" }
                                 }
                              ]
                         },
@@ -55,7 +55,7 @@ def create_jsonl_file(jsonl_path):
                              "content": [
                                  {
                                     "type": "image_url",
-                                    "image_url": { "url": f"{github_url}{Non_double_fences_local_folder}{img_name}?raw=true" }
+                                    "image_url": { "url": f"{github_url}{img_name}?raw=true" }
                                 }
                              ]
                         },

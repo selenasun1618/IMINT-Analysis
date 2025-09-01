@@ -3,10 +3,12 @@ import math
 import time
 import json
 from typing import Iterator, Tuple
+import sys
 from dotenv import load_dotenv
 from openai import OpenAI
 from datetime import datetime
-
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'evals'))
+from aaa_prompts import FEW_SHOT_PROMPT
 from static_api_AAA_collection import (
     save_static_map_image,
     build_gmaps_static_url,
@@ -80,7 +82,7 @@ def classify_image_url(client: OpenAI, model: str, image_url: str) -> str:
             messages=[
                 {
                     "role": "developer",
-                    "content": "You are an expert nuclear analyst. Classify if the image contains an anti-aircraft artillery (AAA) site. Respond only with a JSON object {\"aaa_present\": \"yes\"|\"no\"}.",
+                    "content": FEW_SHOT_PROMPT,
                 },
                 {
                     "role": "user",

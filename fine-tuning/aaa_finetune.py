@@ -7,10 +7,10 @@ client = OpenAI(api_key="sk-proj-huEb3hWqBLsV43FqL4WV-uJpM9WTYjpEeM9D6X_G6WOxuIc
 
 def create_jsonl_file(jsonl_path):
     """Create a JSONL file with the image and AAA presence."""
-    github_url = "https://github.com/selenasun1618/IMINT-Images/blob/main/AAA/"
+    github_url = "https://github.com/selenasun1618/IMINT-Images/blob/main/AAA/aaa_train_combined/"
     local_dir = "../IMINT-Images/AAA/"
-    AAA_local_folder = "aaa_train/"
-    Non_AAA_local_folder = "non_aaa_train/"
+    AAA_local_folder = "yes_aaa_train/"
+    Non_AAA_local_folder = "no_aaa_train/"
 
     total_written = 0
 
@@ -30,7 +30,7 @@ def create_jsonl_file(jsonl_path):
                              "content": [
                                  {
                                     "type": "image_url",
-                                    "image_url": { "url": f"{github_url}{AAA_local_folder}{img_name}?raw=true" }
+                                    "image_url": { "url": f"{github_url}{img_name}?raw=true" }
                                 }
                              ]
                         },
@@ -55,7 +55,7 @@ def create_jsonl_file(jsonl_path):
                              "content": [
                                  {
                                     "type": "image_url",
-                                    "image_url": { "url": f"{github_url}{Non_AAA_local_folder}{img_name}?raw=true" }
+                                    "image_url": { "url": f"{github_url}{img_name}?raw=true" }
                                 }
                              ]
                         },
